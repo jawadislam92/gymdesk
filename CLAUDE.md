@@ -31,21 +31,22 @@
   - Seed (`backend/prisma/seed.ts`) — system roles + a demo gym/owner/plans (`owner@demo.gym` / `Password123!`).
   - **Verified:** `pnpm install` clean; backend builds; boots and listens on :4000; `GET /api/docs` → 200.
 - ✅ **Database is live (local Postgres 16.6).** `init` migration applied (22 tables), seed loaded (6 roles + demo gym/owner/plans). `GET /api/v1/health` → `database:"up"`.
-- 🚧 Not built yet: client apps (`apps/web|mobile|desktop`), `packages/ui` + `api-client`, and the auth/RBAC + feature modules.
+- ✅ **Auth + RBAC live.** `AuthModule`: `register`/`login`/`refresh`/`logout`/`me`; argon2id hashing; JWT access + refresh with **Redis-backed rotation/revocation**; global `JwtAuthGuard` + `PermissionsGuard` with `@Public` / `@RequirePermissions` / `@CurrentUser`. Permissions come from the seeded roles. Verified end-to-end (login → /me → 401-without-token → bad-password 401 → refresh → register).
+- 🚧 Not built yet: core feature modules (gyms/members/plans/memberships/payments/attendance), client apps (`apps/web|mobile|desktop`), `packages/ui` + `api-client`.
 
 ### Local environment notes (Windows + Laragon)
 - Node 22 + npm present. **pnpm 11.6** installed globally; the npm global bin `C:\Users\Jawad\AppData\Roaming\npm` was added to the User PATH. Tool-spawned shells may still need `$env:PATH = "$env:APPDATA\npm;$env:PATH"` prepended (they inherit a cached env).
 - pnpm 11 blocks dependency build scripts by default → trusted ones (Prisma engines) are approved in `pnpm-workspace.yaml` under `allowBuilds`.
-- **Redis** is available via Laragon (`C:\laragon\bin\redis`).
+- **Redis** runs locally (Laragon binary) and is **required by the backend** (login sessions). Start it with `scripts\redis-start.ps1`, or start DB + Redis together via `scripts\services-start.ps1` (or the `Start GymFlow Services.bat` double-click).
 - **PostgreSQL 16.6 installed locally** (portable, no service): binaries `C:\laragon\bin\postgresql\pgsql`, data `C:\laragon\data\gymflow-pg`, superuser `postgres`/`postgres`, db `gymflow_dev` on :5432. It runs as a plain process and does **not** auto-start after reboot — **start it before backend work** with `scripts\pg-start.ps1` (or the `Start GymFlow Database.bat` double-click); stop with `scripts\pg-stop.ps1`. (Postgres binaries live outside the repo and are not committed.)
 - Run the API: `pnpm --filter @gymflow/backend dev`. Env lives in `backend/.env` (gitignored; template at `backend/.env.example`).
 - **Schema-location deviation:** the Prisma schema lives in `backend/prisma/` (Prisma's convention), not the top-level `database/` sketched in §6. See `database/README.md`.
 
 ## Immediate next steps for a new session
-*(Local Postgres is set up — start it with `scripts\pg-start.ps1` if it isn't running.)*
-1. **Backend auth + RBAC** (§9, §15): JWT access/refresh, argon2 hashing, `AuthModule` (login/register/refresh/me), role/permission guards, per-request gym scoping. Reuse the zod schemas + `ROLE_PERMISSIONS` in `@gymflow/shared`.
-2. **Core CRUD modules**: gyms, members, membership-plans, memberships, payments, attendance — each a NestJS module with controller/service/DTOs, gym-scoped, following the §14 routes.
-3. **Scaffold `apps/web`** (Next.js App Router + Tailwind + TanStack Query) and `packages/ui`; wire login → dashboard. Build order stays **web admin → desktop → mobile** (§12); MVP scope is §10.
+*(Start local services first: `scripts\services-start.ps1` — brings up Postgres + Redis.)*
+1. **Core CRUD modules**: gyms, members, membership-plans, memberships, payments, attendance — each a NestJS module (controller/service/DTOs), **gym-scoped** off `req.user.gymId`, guarded with `@RequirePermissions`, following the §14 routes. Reuse the zod schemas in `@gymflow/shared` (extend as needed). Add a small `@CurrentUser`-based tenant scoping helper.
+2. **Scaffold `apps/web`** (Next.js App Router + Tailwind + TanStack Query) and `packages/ui`; wire login → dashboard against the live auth API. Build order stays **web admin → desktop → mobile** (§12); MVP scope is §10.
+3. Add tests on auth + payments (§12 Phase 2 deliverable); generate `packages/api-client` from the OpenAPI spec at `/api/docs`.
 
 ## Conventions
 - **Git author** for verified commits: `git config user.email noreply@anthropic.com && git config user.name Claude`.
