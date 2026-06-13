@@ -21,21 +21,28 @@
 5. **Priorities (non-negotiable):** one language / no clashes · speed (designed in per layer) · additive extensibility.
 6. **Naming:** repo `gymflow-suite`, product **GymFlow Suite**, DB `gymflow`, service `gymflow-api`. (This repo is currently named `gymdesk`.)
 
-## Current status (as of 2026-06-13)
-- ✅ Planning complete: `docs/PRODUCT_PLAN.md` (v1.1, all 18 sections) + `README.md` + this `CLAUDE.md`.
-- ⚠️ These were committed in an earlier **remote session** but **could not be pushed** — that session had **read-only** GitHub access.
-- ✅ The owner has since **re-authorized "Claude by Anthropic" with write access**, so a **new session should be able to push**. (Running sessions cache their credentials at start, so the old session stayed read-only.)
-- 🚧 **No code scaffolded yet** — only the planning docs exist.
+## Current status (as of 2026-06-14)
+- ✅ Planning complete: `docs/PRODUCT_PLAN.md` (v1.1) + `README.md` + this `CLAUDE.md`. Planning docs are pushed to `github.com/jawadislam92/gymdesk`.
+- ✅ **Monorepo scaffolded and verified** (branch `feat/scaffold-monorepo`):
+  - Root: pnpm workspaces + Turborepo + shared TS base (`tsconfig.base.json`) + Prettier via `@gymflow/config`.
+  - `packages/shared` — role catalog, RBAC permission map (§9), status enums, and zod schemas (auth/member/plan). Builds to `dist`.
+  - `backend` (`gymflow-api`) — NestJS 11 on **Fastify**, Prisma 6, global `/api/v1` prefix, Swagger UI at `/api/docs`, global Zod validation pipe, `PrismaModule` that tolerates a missing DB at boot, and `/api/v1/health`.
+  - **Full Prisma schema** (`backend/prisma/schema.prisma`) — every §8 model + enums, multi-tenant `gym_id`, the §8 indexes, soft-delete columns; `prisma validate` passes.
+  - Seed (`backend/prisma/seed.ts`) — system roles + a demo gym/owner/plans (`owner@demo.gym` / `Password123!`).
+  - **Verified:** `pnpm install` clean; backend builds; boots and listens on :4000; `GET /api/v1/health` → 200 (`database:"down"` until Postgres is wired); `GET /api/docs` → 200.
+- 🚧 Not built yet: client apps (`apps/web|mobile|desktop`), `packages/ui` + `api-client`, auth/RBAC/feature modules, and a running database.
+
+### Local environment notes (Windows + Laragon)
+- Node 22 + npm present. **pnpm 11.6** installed globally; the npm global bin `C:\Users\Jawad\AppData\Roaming\npm` was added to the User PATH. Tool-spawned shells may still need `$env:PATH = "$env:APPDATA\npm;$env:PATH"` prepended (they inherit a cached env).
+- pnpm 11 blocks dependency build scripts by default → trusted ones (Prisma engines) are approved in `pnpm-workspace.yaml` under `allowBuilds`.
+- **Redis** is available via Laragon (`C:\laragon\bin\redis`). **No PostgreSQL locally** (Laragon ships MySQL) — provision Postgres (managed, e.g. Neon/Railway, or a local install) before `pnpm db:migrate`.
+- Run the API: `pnpm --filter @gymflow/backend dev`. Env lives in `backend/.env` (gitignored; template at `backend/.env.example`).
+- **Schema-location deviation:** the Prisma schema lives in `backend/prisma/` (Prisma's convention), not the top-level `database/` sketched in §6. See `database/README.md`.
 
 ## Immediate next steps for a new session
-1. **Verify write access** by pushing the planning docs (`docs/PRODUCT_PLAN.md`, `README.md`, `CLAUDE.md`) to the working branch (or `main`). If push still 403s, the credentials didn't refresh — tell the owner to start another fresh session.
-2. **Scaffold the codebase:**
-   - Monorepo root: pnpm workspaces + Turborepo, shared `config` (ESLint/TS/Tailwind/Prettier).
-   - `backend/`: NestJS (Fastify) + Prisma; implement the schema from **PRODUCT_PLAN.md §8**, auth (JWT + refresh), RBAC guards (§9), multi-tenancy.
-   - `packages/`: `shared` (zod schemas + types), `api-client` (generated from OpenAPI), `ui` (design system).
-   - `apps/`: `web` (Next.js), `mobile` (Expo), `desktop` (Tauri) shells.
-   - `database/`: Prisma schema + seeds (roles, demo gym, plans).
-3. **Follow the roadmap (PRODUCT_PLAN.md §12).** Build order: **web admin → desktop reception → mobile**. Start with the MVP scope in **§10**.
+1. **Provision Postgres**, set `DATABASE_URL` in `backend/.env`, then `pnpm db:migrate` + `pnpm db:seed`. Health then flips to `database:"up"`.
+2. **Backend auth + RBAC** (§9, §15): JWT access/refresh, argon2 hashing, `AuthModule`, role/permission guards, per-request gym scoping. Then core modules: gyms, members, plans, memberships, payments, attendance.
+3. **Scaffold `apps/web`** (Next.js App Router + Tailwind + TanStack Query) and `packages/ui`; wire login → dashboard. Build order stays **web admin → desktop → mobile** (§12); MVP scope is §10.
 
 ## Conventions
 - **Git author** for verified commits: `git config user.email noreply@anthropic.com && git config user.name Claude`.

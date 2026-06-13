@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+
+# Environment (never commit real secrets — only .env.example is tracked)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Prisma local databases
+*.db
+*.db-journal
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Coverage / test output
+coverage/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Tauri (desktop) build artifacts
+apps/desktop/src-tauri/target/
+
+# Expo (mobile)
+apps/mobile/.expo/

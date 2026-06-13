@@ -1,0 +1,13 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "backend"
+
+# Trusted dependencies allowed to run install/build scripts (pnpm blocks
+# dependency scripts by default). Prisma needs these to fetch its engine binaries.
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  prisma: true
+  esbuild: true

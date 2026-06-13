@@ -1,0 +1,50 @@
+{
+  "name": "@gymflow/backend",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "description": "GymFlow Suite API (gymflow-api) — NestJS + Fastify + Prisma + PostgreSQL.",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "prisma generate && nest build",
+    "dev": "nest start --watch",
+    "start": "node dist/main.js",
+    "start:prod": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:validate": "prisma validate",
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "ts-node --transpile-only prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "ts-node --transpile-only prisma/seed.ts"
+  },
+  "dependencies": {
+    "@gymflow/shared": "workspace:*",
+    "@fastify/static": "^8.0.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/platform-fastify": "^11.0.0",
+    "@nestjs/swagger": "^11.0.0",
+    "@node-rs/argon2": "^2.0.0",
+    "@prisma/client": "^6.0.0",
+    "ioredis": "^5.4.0",
+    "nestjs-zod": "^4.0.0",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@types/node": "^22.10.0",
+    "prisma": "^6.0.0",
+    "ts-node": "^10.9.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.0"
+  }
+}

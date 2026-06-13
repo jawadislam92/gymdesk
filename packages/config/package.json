@@ -1,0 +1,11 @@
+{
+  "name": "@gymflow/config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "description": "Shared lint/format/build configuration for GymFlow Suite.",
+  "exports": {
+    "./prettier": "./prettier/index.cjs"
+  },
+  "files": ["prettier"]
+}

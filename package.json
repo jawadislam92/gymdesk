@@ -1,0 +1,30 @@
+{
+  "name": "gymflow-suite",
+  "version": "0.0.0",
+  "private": true,
+  "description": "GymFlow Suite — multi-platform gym management SaaS (web, mobile, desktop) on one TypeScript backend.",
+  "packageManager": "pnpm@11.6.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=11"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore",
+    "db:generate": "pnpm --filter @gymflow/backend prisma:generate",
+    "db:migrate": "pnpm --filter @gymflow/backend prisma:migrate",
+    "db:seed": "pnpm --filter @gymflow/backend prisma:seed",
+    "db:studio": "pnpm --filter @gymflow/backend prisma:studio"
+  },
+  "devDependencies": {
+    "@gymflow/config": "workspace:*",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  }
+}
