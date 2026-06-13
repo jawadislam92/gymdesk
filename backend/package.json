@@ -16,7 +16,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:validate": "prisma validate",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "ts-node --transpile-only prisma/seed.ts"
+    "prisma:seed": "prisma db seed"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"

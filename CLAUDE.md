@@ -29,19 +29,22 @@
   - `backend` (`gymflow-api`) — NestJS 11 on **Fastify**, Prisma 6, global `/api/v1` prefix, Swagger UI at `/api/docs`, global Zod validation pipe, `PrismaModule` that tolerates a missing DB at boot, and `/api/v1/health`.
   - **Full Prisma schema** (`backend/prisma/schema.prisma`) — every §8 model + enums, multi-tenant `gym_id`, the §8 indexes, soft-delete columns; `prisma validate` passes.
   - Seed (`backend/prisma/seed.ts`) — system roles + a demo gym/owner/plans (`owner@demo.gym` / `Password123!`).
-  - **Verified:** `pnpm install` clean; backend builds; boots and listens on :4000; `GET /api/v1/health` → 200 (`database:"down"` until Postgres is wired); `GET /api/docs` → 200.
-- 🚧 Not built yet: client apps (`apps/web|mobile|desktop`), `packages/ui` + `api-client`, auth/RBAC/feature modules, and a running database.
+  - **Verified:** `pnpm install` clean; backend builds; boots and listens on :4000; `GET /api/docs` → 200.
+- ✅ **Database is live (local Postgres 16.6).** `init` migration applied (22 tables), seed loaded (6 roles + demo gym/owner/plans). `GET /api/v1/health` → `database:"up"`.
+- 🚧 Not built yet: client apps (`apps/web|mobile|desktop`), `packages/ui` + `api-client`, and the auth/RBAC + feature modules.
 
 ### Local environment notes (Windows + Laragon)
 - Node 22 + npm present. **pnpm 11.6** installed globally; the npm global bin `C:\Users\Jawad\AppData\Roaming\npm` was added to the User PATH. Tool-spawned shells may still need `$env:PATH = "$env:APPDATA\npm;$env:PATH"` prepended (they inherit a cached env).
 - pnpm 11 blocks dependency build scripts by default → trusted ones (Prisma engines) are approved in `pnpm-workspace.yaml` under `allowBuilds`.
-- **Redis** is available via Laragon (`C:\laragon\bin\redis`). **No PostgreSQL locally** (Laragon ships MySQL) — provision Postgres (managed, e.g. Neon/Railway, or a local install) before `pnpm db:migrate`.
+- **Redis** is available via Laragon (`C:\laragon\bin\redis`).
+- **PostgreSQL 16.6 installed locally** (portable, no service): binaries `C:\laragon\bin\postgresql\pgsql`, data `C:\laragon\data\gymflow-pg`, superuser `postgres`/`postgres`, db `gymflow_dev` on :5432. It runs as a plain process and does **not** auto-start after reboot — **start it before backend work** with `scripts\pg-start.ps1` (or the `Start GymFlow Database.bat` double-click); stop with `scripts\pg-stop.ps1`. (Postgres binaries live outside the repo and are not committed.)
 - Run the API: `pnpm --filter @gymflow/backend dev`. Env lives in `backend/.env` (gitignored; template at `backend/.env.example`).
 - **Schema-location deviation:** the Prisma schema lives in `backend/prisma/` (Prisma's convention), not the top-level `database/` sketched in §6. See `database/README.md`.
 
 ## Immediate next steps for a new session
-1. **Provision Postgres**, set `DATABASE_URL` in `backend/.env`, then `pnpm db:migrate` + `pnpm db:seed`. Health then flips to `database:"up"`.
-2. **Backend auth + RBAC** (§9, §15): JWT access/refresh, argon2 hashing, `AuthModule`, role/permission guards, per-request gym scoping. Then core modules: gyms, members, plans, memberships, payments, attendance.
+*(Local Postgres is set up — start it with `scripts\pg-start.ps1` if it isn't running.)*
+1. **Backend auth + RBAC** (§9, §15): JWT access/refresh, argon2 hashing, `AuthModule` (login/register/refresh/me), role/permission guards, per-request gym scoping. Reuse the zod schemas + `ROLE_PERMISSIONS` in `@gymflow/shared`.
+2. **Core CRUD modules**: gyms, members, membership-plans, memberships, payments, attendance — each a NestJS module with controller/service/DTOs, gym-scoped, following the §14 routes.
 3. **Scaffold `apps/web`** (Next.js App Router + Tailwind + TanStack Query) and `packages/ui`; wire login → dashboard. Build order stays **web admin → desktop → mobile** (§12); MVP scope is §10.
 
 ## Conventions
