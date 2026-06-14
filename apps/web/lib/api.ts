@@ -28,9 +28,13 @@ interface ApiOptions extends RequestInit {
 export async function apiFetch<T>(path: string, options: ApiOptions = {}): Promise<T> {
   const { auth = true, headers, ...rest } = options;
   const finalHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...(headers as Record<string, string> | undefined),
   };
+  // Only set a JSON content type when there's actually a body (avoids
+  // Fastify's "empty JSON body" error on no-body POSTs like logout/freeze).
+  if (rest.body != null && !('Content-Type' in finalHeaders)) {
+    finalHeaders['Content-Type'] = 'application/json';
+  }
   if (auth && accessToken) finalHeaders.Authorization = `Bearer ${accessToken}`;
 
   const res = await fetch(`${API_URL}${path}`, { ...rest, headers: finalHeaders });

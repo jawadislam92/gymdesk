@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
+import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { Badge, Button, Card, Input, Select } from '@/components/ui';
 
@@ -140,7 +141,11 @@ export default function MembersPage() {
             {members.map((m) => (
               <tr key={m.id}>
                 <td className="px-4 py-3 font-mono text-xs">{m.memberCode}</td>
-                <td className="px-4 py-3 font-medium">{m.fullName}</td>
+                <td className="px-4 py-3 font-medium">
+                  <Link href={`/members/${m.id}`} className="text-brand hover:underline">
+                    {m.fullName}
+                  </Link>
+                </td>
                 <td className="px-4 py-3 text-slate-500">{m.phone ?? '—'}</td>
                 <td className="px-4 py-3">
                   <Badge tone={statusTone[m.status] ?? 'slate'}>{m.status}</Badge>
