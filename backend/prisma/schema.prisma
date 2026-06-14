@@ -162,6 +162,7 @@ model Gym {
   auditLogs       AuditLog[]
   exercises       Exercise[]
   devices         Device[]
+  leads           Lead[]
 
   @@map("gyms")
 }
@@ -639,4 +640,22 @@ model AuditLog {
   @@index([gymId, createdAt])
   @@index([entityType, entityId])
   @@map("audit_logs")
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  gymId     String   @map("gym_id")
+  fullName  String   @map("full_name")
+  email     String?
+  phone     String?
+  message   String?
+  source    String? // e.g. "public_page"
+  status    String   @default("new") // new / contacted / converted / lost
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  gym Gym @relation(fields: [gymId], references: [id])
+
+  @@index([gymId, status])
+  @@map("leads")
 }

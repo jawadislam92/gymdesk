@@ -98,3 +98,11 @@ export const GENDER = {
   OTHER: 'other',
 } as const;
 export type Gender = (typeof GENDER)[keyof typeof GENDER];
+
+export const LEAD_STATUS = {
+  NEW: 'new',
+  CONTACTED: 'contacted',
+  CONVERTED: 'converted',
+  LOST: 'lost',
+} as const;
+export type LeadStatus = (typeof LEAD_STATUS)[keyof typeof LEAD_STATUS];

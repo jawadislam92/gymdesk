@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth';
 const NAV = [
   { href: '/dashboard', label: 'Dashboard', perm: PERMISSIONS.DASHBOARD_VIEW },
   { href: '/members', label: 'Members', perm: PERMISSIONS.MEMBERS_MANAGE },
+  { href: '/leads', label: 'Leads', perm: PERMISSIONS.MEMBERS_MANAGE },
   { href: '/plans', label: 'Plans', perm: PERMISSIONS.PLANS_MANAGE },
   { href: '/schedule', label: 'Schedule', perm: PERMISSIONS.CLASSES_BOOK },
   { href: '/trainers', label: 'Trainers', perm: PERMISSIONS.TRAINERS_MANAGE },

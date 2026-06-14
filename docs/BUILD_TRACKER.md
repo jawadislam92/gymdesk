@@ -31,8 +31,8 @@
 - [x] Membership lifecycle: assign / renew / freeze / cancel (B)
 - [ ] Member tags + custom fields (B)
 - [ ] **Digital contracts & e-signature**, liability waivers (B/C/D) 🔌
-- [ ] **Lead capture** (web form, walk-in, QR) + **sales pipeline / leads board** (B)
-- [ ] Lead follow-up automation (tasks + reminders) (B)
+- [x] **Lead capture** (public-page enquiry → `leads`) + **staff Leads inbox** w/ status (B,D)
+- [ ] Sales pipeline / Kanban; lead follow-up automation (tasks + reminders) (B)
 - [ ] Trial management (B)
 
 ### A2. Scheduling, Classes & Booking
@@ -64,9 +64,9 @@
       credentials + assigns `member` role (B/C)
 
 ### A5. Public / Marketing (Surface D — web)
-- [ ] **GymFlow marketing website** (landing, features, pricing, sign-up) (D)
-- [ ] **Per-gym public page**: public schedule, join online, buy membership, book a trial (D)
-- [ ] Embeddable booking widget (D)
+- [x] **GymFlow marketing landing** (`/`): hero, features, pricing, CTAs (D)
+- [x] **Per-gym public page** (`/g/[slug]`): public schedule + plans + "Request to join" → lead (D)
+- [ ] Online join *with payment* (needs Stripe) + embeddable booking widget (D)
 
 ### A6. Communications
 - [ ] Email sending (Resend/Postmark) — receipts, reminders, resets (B/C) 🔌
@@ -159,3 +159,8 @@
   subscription plan/status. Seeded `admin@gymflow.app` / `Admin123!`. Web `(platform)`
   console with role-based routing. Verified in-browser + API (3 gyms, onboarded "Peak
   Fitness", new owner logs in). **3 of 4 surfaces done; Public/landing (D) remains.**
+- 2026-06-15 — Surface D + CRM start: public **marketing landing** (`/`, app moved to
+  `/dashboard`); public **per-gym page** (`/g/[slug]`, no-auth: schedule + plans + join
+  form) via `PublicModule`; **leads** table + `LeadsModule` + staff Leads inbox; lead link
+  on Settings. Verified: public lead submit → appears in inbox (Prospect Pete, public_page).
+  **All 4 surfaces now have a web presence.**

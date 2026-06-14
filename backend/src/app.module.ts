@@ -17,6 +17,8 @@ import { TrainersModule } from './trainers/trainers.module';
 import { ClassesModule } from './classes/classes.module';
 import { MeModule } from './me/me.module';
 import { PlatformModule } from './platform/platform.module';
+import { LeadsModule } from './leads/leads.module';
+import { PublicModule } from './public/public.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { PlatformModule } from './platform/platform.module';
     ClassesModule,
     MeModule,
     PlatformModule,
+    LeadsModule,
+    PublicModule,
   ],
 })
 export class AppModule {}

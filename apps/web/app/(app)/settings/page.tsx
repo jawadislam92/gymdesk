@@ -8,6 +8,7 @@ import { Badge, Button, Card, Input, Select } from '@/components/ui';
 
 interface Gym {
   id: string;
+  slug: string;
   name: string;
   currency: string;
   timezone: string;
@@ -89,6 +90,23 @@ export default function SettingsPage() {
   return (
     <div className="max-w-3xl space-y-8">
       <h1 className="text-2xl font-bold">Settings</h1>
+
+      {gym && (
+        <Card>
+          <div className="text-sm text-slate-600">
+            Your public sign-up page:{' '}
+            <a
+              href={`/g/${gym.slug}`}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-brand hover:underline"
+            >
+              /g/{gym.slug}
+            </a>{' '}
+            — share it to capture leads.
+          </div>
+        </Card>
+      )}
 
       <Card>
         <h2 className="mb-4 font-semibold">Gym profile</h2>

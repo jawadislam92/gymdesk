@@ -9,3 +9,4 @@ export * from './gym';
 export * from './staff';
 export * from './class';
 export * from './platform';
+export * from './lead';
