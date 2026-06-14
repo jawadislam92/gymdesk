@@ -47,6 +47,42 @@ export class PaymentsService {
     return this.shape(payment);
   }
 
+  /** Record a successful online (Stripe) payment. Idempotent on the gateway ref so
+   *  confirming the same checkout session twice never double-books the revenue. */
+  async recordOnline(opts: {
+    gymId: string;
+    memberId: string;
+    membershipId?: string | null;
+    amount: number;
+    currency: string;
+    gatewayRef: string;
+  }) {
+    const existing = await this.prisma.payment.findFirst({
+      where: { gymId: opts.gymId, gatewayRef: opts.gatewayRef },
+      include: paymentInclude,
+    });
+    if (existing) return this.shape(existing);
+
+    const invoiceNumber = await this.nextInvoiceNumber(opts.gymId);
+    const payment = await this.prisma.payment.create({
+      data: {
+        gymId: opts.gymId,
+        memberId: opts.memberId,
+        membershipId: opts.membershipId ?? null,
+        amount: opts.amount,
+        currency: opts.currency,
+        method: 'online',
+        status: 'paid',
+        gateway: 'stripe',
+        gatewayRef: opts.gatewayRef,
+        paidAt: new Date(),
+        invoiceNumber,
+      },
+      include: paymentInclude,
+    });
+    return this.shape(payment);
+  }
+
   async list(gymId: string, query: PaginationQuery & { memberId?: string }) {
     const where: Prisma.PaymentWhereInput = {
       gymId,

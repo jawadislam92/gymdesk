@@ -164,18 +164,31 @@ call when we get there.)*
 
 ## 5. Adding online card payments later (Stripe)
 
-The Stripe integration is built and **config-gated** — it stays dormant until keys
-exist, so the app runs fine without it. To turn it on, you create a free Stripe
-account and add **test** keys first:
+The Stripe integration is **built and config-gated** — it stays dormant until a key
+exists, so the app runs fine on manual/cash payments without it. Endpoints live at
+`/api/v1/billing/{status,checkout,confirm}`; flow is checkout → Stripe's hosted page
+→ redirect back → confirm + record (idempotent on the Stripe session id).
+
+To switch it on you only need **one** variable:
 
 | Variable (on `gymflow-api`) | Where to get it |
 |------------------------------|-----------------|
 | `STRIPE_SECRET_KEY` | Stripe dashboard → Developers → API keys (use `sk_test_…` first) |
-| `STRIPE_WEBHOOK_SECRET` | Stripe dashboard → Developers → Webhooks → add endpoint `…/api/v1/billing/webhook` |
 
-With test keys set, we verify the full flow end-to-end (test card `4242 4242 4242
-4242`) before ever switching to live keys. **Entering live keys / real card data is
-your step, not mine** — I'll never handle real payment credentials.
+That's enough to activate it (`/billing/status` flips to `enabled:true`, and a "Pay by
+card (online)" button appears on the Payments screen). With the test key set, we verify
+the full flow end-to-end (test card `4242 4242 4242 4242`) before ever switching to live
+keys. **Entering live keys / real card data is your step, not mine** — I'll never handle
+real payment credentials.
+
+*Optional later hardening:* add a Stripe **webhook** (`STRIPE_WEBHOOK_SECRET`) so a
+payment is captured even if the payer closes the tab before redirecting back. The
+confirm step is already idempotent, so adding webhooks won't double-charge the books.
+
+> Verified now (without keys): `status` returns `enabled:false`; `checkout`/`confirm`
+> return a clear **503**; with a dummy key present the request correctly reaches Stripe
+> and surfaces its auth error. Only a real test key (your step) can exercise a complete
+> paid transaction.
 
 ---
 

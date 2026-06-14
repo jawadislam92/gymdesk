@@ -48,7 +48,11 @@
 
 ### A3. Billing, Payments & Invoicing
 - [x] Manual payment recording + invoice numbers + history (B)
-- [ ] **Stripe integration** — online card payments (B/C) 🔌
+- [~] **Stripe integration** — online card payments: `BillingModule`
+      (`/billing/status|checkout|confirm`), **config-gated** on `STRIPE_SECRET_KEY`,
+      idempotent recording (gatewayRef); web "Pay by card" button + confirm-on-return.
+      Verified gating (503), DTO validation (400), and that a request reaches Stripe
+      with a key present. Live paid transaction pending owner's test keys (B/C) 🔌
 - [ ] **Recurring billing / subscriptions** (auto-charge) (B/C) 🔌
 - [ ] Failed-payment recovery / dunning (B) 🔌
 - [ ] Branded **PDF invoices & receipts** + tax/VAT (B/C)
@@ -206,3 +210,11 @@
   (`CORS_ORIGIN`, safe local default) + `.env.example` updated. Wrote `docs/DEPLOYMENT.md`
   (owner's 3-account steps + full deploy runbook). Verified prod `next build` + `nest build`
   pass; backend healthy after CORS change. (Owner can't do their side yet — finishing my side.)
+- 2026-06-15 — Completeness features (all owner-side-free, verified in-browser):
+  • CSV export (members + payments) — `lib/csv.ts`, paginates all rows; captured blobs correct.
+  • Printable receipts (payments + shop sales) — `lib/receipt.ts`, branded print/PDF; captured
+    HTML correct (incl. qty line).
+  • Online payments (Stripe) — `BillingModule` config-gated on `STRIPE_SECRET_KEY`; status/
+    checkout/confirm, idempotent recording; web Pay-by-card + confirm-on-return + dormant-state
+    hint. Verified: 503 gating, 400 validation, request reaches Stripe with a (fake) key, status
+    flips enabled:true/false. Live paid txn pending owner's Stripe test keys.

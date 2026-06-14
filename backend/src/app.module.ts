@@ -27,6 +27,7 @@ import { WaiversModule } from './waivers/waivers.module';
 import { RenewalsModule } from './renewals/renewals.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { PosModule } from './pos/pos.module';
+import { BillingModule } from './billing/billing.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { PosModule } from './pos/pos.module';
     RenewalsModule,
     ExpensesModule,
     PosModule,
+    BillingModule,
   ],
 })
 export class AppModule {}

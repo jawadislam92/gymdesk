@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
 import { Button, Card, Input, Select } from '@/components/ui';
 import { dateStamp, downloadCsv } from '@/lib/csv';
@@ -36,6 +36,10 @@ export default function PaymentsPage() {
     queryFn: () =>
       apiFetch<{ name: string; currency: string; address: string | null; city: string | null }>('/gym'),
   });
+  const billingQuery = useQuery({
+    queryKey: ['billing-status'],
+    queryFn: () => apiFetch<{ enabled: boolean }>('/billing/status'),
+  });
   const paymentsQuery = useQuery({
     queryKey: ['payments'],
     queryFn: () => apiFetch<Paginated<Payment>>('/payments?pageSize=50'),
@@ -54,6 +58,37 @@ export default function PaymentsPage() {
       void qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
+
+  const checkout = useMutation({
+    mutationFn: (body: { memberId: string; amount: number }) =>
+      apiFetch<{ url: string }>('/billing/checkout', { method: 'POST', body: JSON.stringify(body) }),
+    onSuccess: (r) => {
+      window.location.href = r.url; // hand off to Stripe's hosted checkout
+    },
+    onError: (e) => setNotice((e as Error).message),
+  });
+
+  // When Stripe redirects back to /payments?paid=<session_id>, confirm + record it.
+  useEffect(() => {
+    const paid = new URLSearchParams(window.location.search).get('paid');
+    if (!paid) return;
+    window.history.replaceState({}, '', '/payments');
+    if (paid === 'cancelled') {
+      setNotice('Online payment cancelled.');
+      return;
+    }
+    apiFetch<{ recorded: boolean }>('/billing/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: paid }),
+    })
+      .then((r) => {
+        setNotice(r.recorded ? 'Online payment received ✓' : 'Payment was not completed.');
+        void qc.invalidateQueries({ queryKey: ['payments'] });
+        void qc.invalidateQueries({ queryKey: ['dashboard'] });
+      })
+      .catch((e: unknown) => setNotice((e as Error).message));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function onRecord(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -139,12 +174,39 @@ export default function PaymentsPage() {
             <option value="online">Online</option>
             <option value="bank">Bank</option>
           </Select>
-          <div className="flex items-end">
+          <div className="flex items-end gap-2">
             <Button type="submit" disabled={record.isPending}>
               {record.isPending ? 'Saving…' : 'Record'}
             </Button>
+            {billingQuery.data?.enabled && (
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={checkout.isPending}
+                onClick={(e) => {
+                  const form = e.currentTarget.form;
+                  if (!form) return;
+                  const f = new FormData(form);
+                  const memberId = String(f.get('memberId') || '');
+                  const amount = Number(f.get('amount'));
+                  if (!memberId || !amount) {
+                    setNotice('Pick a member and amount first.');
+                    return;
+                  }
+                  checkout.mutate({ memberId, amount });
+                }}
+              >
+                {checkout.isPending ? 'Redirecting…' : 'Pay by card (online)'}
+              </Button>
+            )}
           </div>
         </form>
+        {billingQuery.data && !billingQuery.data.enabled && (
+          <p className="mt-3 text-xs text-slate-400">
+            💳 Online card payments are built in — add your Stripe keys to switch them on
+            (see DEPLOYMENT.md §5).
+          </p>
+        )}
         {record.error && <p className="mt-2 text-sm text-red-600">{(record.error as Error).message}</p>}
       </Card>
 
