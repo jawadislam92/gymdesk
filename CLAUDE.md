@@ -26,7 +26,7 @@
 5. **Priorities (non-negotiable):** one language / no clashes · speed (designed in per layer) · additive extensibility.
 6. **Naming:** repo `gymflow-suite`, product **GymFlow Suite**, DB `gymflow`, service `gymflow-api`. (This repo is currently named `gymdesk`.)
 
-## Current status (as of 2026-06-14)
+## Current status (as of 2026-06-15)
 - ✅ Planning complete: `docs/PRODUCT_PLAN.md` (v1.1) + `README.md` + this `CLAUDE.md`. Planning docs are pushed to `github.com/jawadislam92/gymdesk`.
 - ✅ **Monorepo scaffolded and verified** (branch `feat/scaffold-monorepo`):
   - Root: pnpm workspaces + Turborepo + shared TS base (`tsconfig.base.json`) + Prettier via `@gymflow/config`.
@@ -39,7 +39,10 @@
 - ✅ **Auth + RBAC live.** `AuthModule`: `register`/`login`/`refresh`/`logout`/`me`; argon2id hashing; JWT access + refresh with **Redis-backed rotation/revocation**; global `JwtAuthGuard` + `PermissionsGuard` with `@Public` / `@RequirePermissions` / `@CurrentUser` / `@GymId`. Permissions come from the seeded roles.
 - ✅ **Core feature modules live & verified end-to-end** (gym-scoped, RBAC-guarded, §14 routes): **members** (CRUD, auto code `M0001…`, search, soft-delete; identity on linked `User`), **membership-plans** (CRUD/archive), **memberships** (assign/renew/freeze/cancel + member status), **payments** (record + list, invoice `INV-YYYY-#####`), **attendance** (check-in w/ valid-membership banner, daily summary), **dashboard** (active/total members, expiring-soon, today check-ins, revenue MTD). Verified full loop: plan→member→membership→payment→check-in→dashboard.
 - ✅ **Web admin app (`apps/web`) — feature-complete & verified in-browser.** Next.js 15 (App Router) + Tailwind + TanStack Query; access token in memory + refresh token in localStorage (httpOnly-cookie migration is a cloud-hardening TODO, §15); role-gated nav from `me.permissions`. Screens: **login**, **dashboard** (KPIs), **members** (search/add/"sell plan + charge"), **member profile** (history + renew/freeze/cancel + assign trainer), **plans**, **payments** (record + list), **check-in** (green/red validity banner + today's log), **reports** (revenue/growth/attendance charts + CSV), **settings** (gym profile + team invite/deactivate), **trainers** (load + assigned members). `next build` + typecheck clean. One-click launch: `scripts\Start GymFlow App.bat` → http://localhost:3000.
-- 🚧 Not built yet: **desktop reception app** (Tauri needs Rust — not installed; Electron is the no-new-toolchain fallback the plan allows), **mobile app** (Expo), `packages/ui` + `api-client`; Stripe/online payments, notifications, member-login/invite, tests.
+- ✅ **Web product now feature-complete across all four surfaces** (full ticked list in `docs/BUILD_TRACKER.md`): **gym-admin** (members, plans, memberships, payments, attendance, dashboard, reports, settings, trainers, classes/schedule, leads, renewals, expenses, POS/shop, workouts, diet, announcements, waivers), **member portal** (status, classes, workouts, progress self-log, diet, payments), **platform console** (Sparking Asia — all gyms + subscriptions, premium UI), and **public** landing + per-gym join pages. 30 verified feature commits on `feat/scaffold-monorepo`.
+- ✅ **Completeness + deploy-readiness (2026-06-15):** CSV export (members/payments), printable receipts (payments/shop), **Stripe online payments built & config-gated** (dormant until `STRIPE_SECRET_KEY`; verified gating/validation + reaches Stripe with a key present), env-configurable CORS, and a full owner deploy guide (`docs/DEPLOYMENT.md`). Prod `next build` + `nest build` both pass.
+- 🚧 Not built yet: **desktop reception app** (Tauri needs Rust — not installed; Electron is the no-new-toolchain fallback), **mobile app** (Expo), `packages/ui` + `api-client`, automated tests/CI. Pre-launch security: httpOnly-cookie auth (refresh token is in localStorage today).
+- ⏳ **Blocked on owner (when they have time):** the "online move" needs 3 free accounts (Neon/Upstash/Railway — `docs/DEPLOYMENT.md` §2); online card payments need the owner's Stripe **test** keys. Owner currently can't do their side, so recent work deliberately finished everything that needs no accounts.
 
 ### Local environment notes (Windows + Laragon)
 - Node 22 + npm present. **pnpm 11.6** installed globally; the npm global bin `C:\Users\Jawad\AppData\Roaming\npm` was added to the User PATH. Tool-spawned shells may still need `$env:PATH = "$env:APPDATA\npm;$env:PATH"` prepended (they inherit a cached env).
@@ -50,10 +53,13 @@
 - **Schema-location deviation:** the Prisma schema lives in `backend/prisma/` (Prisma's convention), not the top-level `database/` sketched in §6. See `database/README.md`.
 
 ## Immediate next steps for a new session
-*(One-click local run: `scripts\Start GymFlow App.bat` → http://localhost:3000, login `owner@demo.gym`/`Password123!`.)*
-1. **Desktop reception app** (§4, §12 Phase 4): a focused check-in/payment/renew shell. Tauri (plan's preference) needs Rust + MSVC build tools installed first; **Electron** works with the current Node toolchain and is the plan-sanctioned fallback. Reuse the web reception/check-in flow; add native receipt printing.
-2. **Member + trainer mobile app** (Expo, §12 Phase 5): member (status/workout/payments/notifications) + trainer (assigned members, plans, progress). Needs the **member login/invite flow** first (members currently have no credentials).
-3. **Cloud hardening (the "online move"):** httpOnly-cookie auth (drop localStorage), managed `DATABASE_URL`/`REDIS_URL` (Neon/Upstash or Railway), Stripe + webhooks, notifications (BullMQ), secrets, tests, CI, deploy (§12 Phase 6–7). Also extract `packages/ui` + generate `packages/api-client` from `/api/docs`.
+*(One-click local run: `scripts\Start GymFlow App.bat` → http://localhost:3000. Logins: gym owner `owner@demo.gym`/`Password123!`; platform admin `admin@gymflow.app`/`Admin123!`; demo member via staff "grant login".)*
+
+The **web product is complete and deploy-ready**. Highest-value next moves:
+1. **When the owner is ready (their side) — the real value unlock:** take it online. Owner creates the 3 free accounts in `docs/DEPLOYMENT.md` §2, then run the deploy runbook (§3). And/or add Stripe **test** keys to switch on online card payments (§5). Getting a real gym using it teaches more than any new feature.
+2. **Desktop reception app** (§4): focused check-in/payment/renew shell. **Electron** (no new toolchain) — Tauri needs Rust. Reuse the web check-in flow + the existing printable-receipt helper for native printing.
+3. **Member + trainer mobile app** (Expo): no new backend needed — the `/me` + member APIs exist and members already get credentials via staff "grant login".
+4. **Pre-launch hardening:** httpOnly-cookie auth (drop localStorage), automated tests (auth + billing first) + CI. Also extract `packages/ui` + generate `packages/api-client` from `/api/docs`.
 
 ## Conventions
 - **Git author** for verified commits: `git config user.email noreply@anthropic.com && git config user.name Claude`.
