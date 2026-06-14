@@ -19,15 +19,17 @@ const NAV = [
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {
-  const { user, loading, logout, hasPermission } = useAuth();
+  const { user, loading, logout, hasPermission, isMemberOnly } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && !user) router.replace('/login');
-  }, [loading, user, router]);
+    if (loading) return;
+    if (!user) router.replace('/login');
+    else if (isMemberOnly) router.replace('/portal');
+  }, [loading, user, isMemberOnly, router]);
 
-  if (loading || !user) {
+  if (loading || !user || isMemberOnly) {
     return <div className="flex min-h-screen items-center justify-center text-slate-400">Loading…</div>;
   }
 

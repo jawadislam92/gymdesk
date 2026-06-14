@@ -27,9 +27,11 @@ interface Tokens {
 interface AuthState {
   user: MeUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<MeUser>;
   logout: () => void;
   hasPermission: (permission: string) => boolean;
+  /** True when the account is a plain member (no staff role) → member portal. */
+  isMemberOnly: boolean;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadMe = useCallback(async () => {
     const me = await apiFetch<MeUser>('/auth/me');
     setUser(me);
+    return me;
   }, []);
 
   const applyTokens = useCallback((tokens: Tokens) => {
@@ -78,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email, password }),
       });
       applyTokens(tokens);
-      await loadMe();
+      return loadMe();
     },
     [applyTokens, loadMe],
   );
@@ -95,8 +98,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user],
   );
 
+  const isMemberOnly = Boolean(
+    user && user.roles.includes('member') && !user.roles.some((r) => r !== 'member'),
+  );
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, hasPermission }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, logout, hasPermission, isMemberOnly }}
+    >
       {children}
     </AuthContext.Provider>
   );

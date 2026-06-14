@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
-import { Badge, Button, Card, Select } from '@/components/ui';
+import { Badge, Button, Card, Input, Select } from '@/components/ui';
 
 interface Member {
   id: string;
@@ -98,6 +99,14 @@ export default function MemberDetailPage() {
         body: JSON.stringify({ assignedTrainerId: trainerId }),
       }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['member', id] }),
+  });
+
+  const [loginMsg, setLoginMsg] = useState<string | null>(null);
+  const grantLogin = useMutation({
+    mutationFn: (body: { email: string; password: string }) =>
+      apiFetch(`/members/${id}/grant-login`, { method: 'POST', body: JSON.stringify(body) }),
+    onSuccess: () => setLoginMsg('Login created — the member can now sign in to the portal.'),
+    onError: (e) => setLoginMsg((e as Error).message),
   });
 
   const member = memberQ.data;
@@ -198,6 +207,26 @@ export default function MemberDetailPage() {
             ))}
           </Select>
         </div>
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Member app login</h2>
+        <form
+          key={member?.id ?? 'loading'}
+          className="flex flex-wrap items-end gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            grantLogin.mutate({ email: String(f.get('email')), password: String(f.get('password')) });
+          }}
+        >
+          <Input label="Email" name="email" type="email" defaultValue={member?.email ?? ''} required />
+          <Input label="Temp password" name="password" minLength={8} required />
+          <Button type="submit" disabled={grantLogin.isPending}>
+            {grantLogin.isPending ? 'Saving…' : 'Create login'}
+          </Button>
+        </form>
+        {loginMsg && <p className="mt-2 text-sm text-slate-600">{loginMsg}</p>}
       </Card>
 
       <Card>

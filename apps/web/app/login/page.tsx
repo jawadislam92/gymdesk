@@ -18,8 +18,9 @@ export default function LoginPage() {
     setBusy(true);
     setError(null);
     try {
-      await login(email, password);
-      router.push('/');
+      const me = await login(email, password);
+      const memberOnly = me.roles.includes('member') && !me.roles.some((r) => r !== 'member');
+      router.push(memberOnly ? '/portal' : '/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

@@ -1,7 +1,8 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import type { CreateMemberInput, MemberListQuery, UpdateMemberInput } from '@gymflow/shared';
+import { type CreateMemberInput, type MemberListQuery, ROLES, type UpdateMemberInput } from '@gymflow/shared';
 import { PrismaService } from '../prisma/prisma.service';
+import { PasswordService } from '../auth/password.service';
 import { paginated, skip } from '../common/pagination';
 
 const memberInclude = {
@@ -12,7 +13,10 @@ type MemberRow = Prisma.MemberGetPayload<{ include: typeof memberInclude }>;
 
 @Injectable()
 export class MembersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly passwords: PasswordService,
+  ) {}
 
   async create(gymId: string, dto: CreateMemberInput) {
     if (dto.email) {
@@ -122,6 +126,38 @@ export class MembersService {
       data: { deletedAt: new Date(), status: 'cancelled' },
     });
     return { success: true };
+  }
+
+  /** Give a member login credentials so they can use the member portal/app. */
+  async grantLogin(gymId: string, memberId: string, email: string, password: string) {
+    const member = await this.prisma.member.findFirst({
+      where: { id: memberId, gymId, deletedAt: null },
+    });
+    if (!member?.userId) throw new NotFoundException('Member not found');
+    const userId = member.userId;
+
+    const clash = await this.prisma.user.findFirst({ where: { email, NOT: { id: userId } } });
+    if (clash) throw new ConflictException('That email is already in use');
+
+    const passwordHash = await this.passwords.hash(password);
+    const memberRole = await this.prisma.role.findFirst({
+      where: { name: ROLES.MEMBER, gymId: null, isSystem: true },
+    });
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: userId },
+        data: { email, passwordHash, emailVerifiedAt: new Date() },
+      });
+      if (memberRole) {
+        await tx.userRole.upsert({
+          where: { userId_roleId_gymId: { userId, roleId: memberRole.id, gymId } },
+          update: {},
+          create: { userId, roleId: memberRole.id, gymId },
+        });
+      }
+    });
+    return { success: true, email };
   }
 
   private shape(member: MemberRow) {

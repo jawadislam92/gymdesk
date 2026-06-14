@@ -4,7 +4,12 @@ import { PERMISSIONS } from '@gymflow/shared';
 import { GymId } from '../auth/decorators/gym-id.decorator';
 import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
 import { MembersService } from './members.service';
-import { CreateMemberDto, MemberListQueryDto, UpdateMemberDto } from './dto/members.dto';
+import {
+  CreateMemberDto,
+  GrantLoginDto,
+  MemberListQueryDto,
+  UpdateMemberDto,
+} from './dto/members.dto';
 
 @ApiTags('members')
 @ApiBearerAuth()
@@ -36,5 +41,10 @@ export class MembersController {
   @Delete(':id')
   remove(@GymId() gymId: string, @Param('id') id: string) {
     return this.members.remove(gymId, id);
+  }
+
+  @Post(':id/grant-login')
+  grantLogin(@GymId() gymId: string, @Param('id') id: string, @Body() dto: GrantLoginDto) {
+    return this.members.grantLogin(gymId, id, dto.email, dto.password);
   }
 }

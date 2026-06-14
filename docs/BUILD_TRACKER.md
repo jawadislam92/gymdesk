@@ -55,12 +55,13 @@
 - [ ] Discounts / coupons / promo codes (B/C/D)
 
 ### A4. Member Portal (Surface C — web)
-- [ ] Member login + "my membership" status & days remaining (C)
-- [ ] **Book / cancel classes** from the schedule (C)
-- [ ] Payment history + download receipts (C)
+- [x] Member login + "my membership" status & days remaining (C)
+- [x] **Book / cancel classes** myself (C)
+- [x] Payment history (receipt PDFs tracked under A3) (C)
 - [ ] My workouts (read) + my progress (C)
 - [ ] Profile, notifications, QR check-in code (C)
-- [ ] Member login/invite flow (set credentials, assign `member` role) (B/C)
+- [x] Member login/invite flow: staff "Create login" on member profile → sets
+      credentials + assigns `member` role (B/C)
 
 ### A5. Public / Marketing (Surface D — web)
 - [ ] **GymFlow marketing website** (landing, features, pricing, sign-up) (D)
@@ -147,3 +148,8 @@
   (create + weekly recurrence, list, book w/ capacity & duplicate guard, cancel) + web
   Schedule week view. Added `classes.manage` permission. Verified in-browser (Evening Yoga,
   booked 1/10, double-book → 409).
+- 2026-06-15 — Phase A4: Member side shipped — `/me` member self-service module
+  (summary, payments, attendance, my bookings, self-book/cancel, available classes) +
+  `grant-login` so staff create a member's credentials. Web: role-based routing, member
+  portal (`apps/web/app/(member)/portal`) with membership status, my classes, self-book,
+  payments. Verified in-browser: Alice logs in → portal → books a class.
