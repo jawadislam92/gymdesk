@@ -5,6 +5,7 @@ import { ClassesService } from '../classes/classes.service';
 import { WorkoutsService } from '../workouts/workouts.service';
 import { ProgressService } from '../progress/progress.service';
 import { DietService } from '../diet/diet.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { addDays } from '../common/date';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class MeService {
     private readonly workouts: WorkoutsService,
     private readonly progress: ProgressService,
     private readonly diet: DietService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   private async resolveMember(gymId: string, userId: string) {
@@ -129,5 +131,9 @@ export class MeService {
   async myDiet(gymId: string, userId: string) {
     const m = await this.resolveMember(gymId, userId);
     return this.diet.listForMember(gymId, m.id);
+  }
+
+  myNotifications(gymId: string, userId: string) {
+    return this.notifications.listForUser(gymId, userId);
   }
 }

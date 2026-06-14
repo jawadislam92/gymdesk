@@ -22,6 +22,7 @@ import { PublicModule } from './public/public.module';
 import { WorkoutsModule } from './workouts/workouts.module';
 import { ProgressModule } from './progress/progress.module';
 import { DietModule } from './diet/diet.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { DietModule } from './diet/diet.module';
     WorkoutsModule,
     ProgressModule,
     DietModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

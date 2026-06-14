@@ -71,7 +71,7 @@
 ### A6. Communications
 - [ ] Email sending (Resend/Postmark) — receipts, reminders, resets (B/C) 🔌
 - [ ] SMS (Twilio / local) (B/C) 🔌
-- [ ] In-app + push notifications (FCM) (B/C) 🔌
+- [x] In-app announcements (broadcast → member portal feed); push (FCM) 🔌 + per-user read TODO (B/C)
 - [ ] Automated renewal / expiry reminders (BullMQ cron) (B)
 
 ### A7. Reporting (deepen)
@@ -174,3 +174,7 @@
   WORKOUTS_MANAGE) + `/me/diet`. Web: member-profile "Nutrition" card (create) +
   member-portal "My diet". Verified: owner created "Cutting plan" (2000 kcal, 2 meals)
   → Alice sees it. Member portal now: status, classes, payments, workout, progress, diet.
+- 2026-06-15 — Announcements: `NotificationsModule` (broadcast announcement → row w/
+  user_id null; list) + `/me/notifications` (member feed = own + broadcasts). Web: Settings
+  composer + member-portal Announcements feed. Verified: "Holiday hours" broadcast → Alice
+  sees it. (Push/FCM + per-user read still TODO.)

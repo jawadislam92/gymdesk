@@ -58,6 +58,12 @@ interface DietPlan {
   macros: { protein?: number; carbs?: number; fat?: number } | null;
   meals: { name: string; items?: string }[] | null;
 }
+interface Announcement {
+  id: string;
+  title: string;
+  body: string | null;
+  createdAt: string;
+}
 
 function fmt(iso: string) {
   return new Date(iso).toLocaleString([], {
@@ -92,6 +98,7 @@ export default function PortalPage() {
   const workoutsQ = useQuery({ queryKey: ['me-workouts'], queryFn: () => apiFetch<WorkoutPlan[]>('/me/workouts') });
   const progressQ = useQuery({ queryKey: ['me-progress'], queryFn: () => apiFetch<ProgressRecord[]>('/me/progress') });
   const dietQ = useQuery({ queryKey: ['me-diet'], queryFn: () => apiFetch<DietPlan[]>('/me/diet') });
+  const notificationsQ = useQuery({ queryKey: ['me-notifications'], queryFn: () => apiFetch<Announcement[]>('/me/notifications') });
   const logProgress = useMutation({
     mutationFn: (body: { weight?: number; notes?: string }) =>
       apiFetch('/me/progress', { method: 'POST', body: JSON.stringify(body) }),
@@ -129,6 +136,21 @@ export default function PortalPage() {
           <p className="text-sm text-slate-400">No active membership — talk to the front desk to get started.</p>
         )}
       </Card>
+
+      {(notificationsQ.data ?? []).length > 0 && (
+        <Card>
+          <h2 className="mb-3 font-semibold">Announcements</h2>
+          <ul className="divide-y divide-slate-100 text-sm">
+            {(notificationsQ.data ?? []).slice(0, 5).map((n) => (
+              <li key={n.id} className="py-2">
+                <div className="font-medium">{n.title}</div>
+                {n.body && <div className="text-slate-500">{n.body}</div>}
+                <div className="text-xs text-slate-400">{new Date(n.createdAt).toLocaleDateString()}</div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
 
       <Card>
         <h2 className="mb-3 font-semibold">My upcoming classes</h2>

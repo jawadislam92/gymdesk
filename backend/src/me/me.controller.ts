@@ -67,6 +67,11 @@ export class MeController {
     return this.me.myDiet(gymId, u.sub);
   }
 
+  @Get('notifications')
+  notifications(@GymId() gymId: string, @CurrentUser() u: AuthUser) {
+    return this.me.myNotifications(gymId, u.sub);
+  }
+
   @Post('progress')
   logProgress(@GymId() gymId: string, @Body() dto: CreateProgressDto, @CurrentUser() u: AuthUser) {
     return this.me.logProgress(gymId, u.sub, dto);

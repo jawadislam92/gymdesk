@@ -23,6 +23,12 @@ interface TeamMember {
   isActive: boolean;
   roles: string[];
 }
+interface Announcement {
+  id: string;
+  title: string;
+  body: string | null;
+  createdAt: string;
+}
 
 export default function SettingsPage() {
   const qc = useQueryClient();
@@ -31,6 +37,15 @@ export default function SettingsPage() {
 
   const gymQ = useQuery({ queryKey: ['gym'], queryFn: () => apiFetch<Gym>('/gym') });
   const teamQ = useQuery({ queryKey: ['team'], queryFn: () => apiFetch<TeamMember[]>('/users') });
+  const announcementsQ = useQuery({
+    queryKey: ['announcements'],
+    queryFn: () => apiFetch<Announcement[]>('/notifications'),
+  });
+  const broadcast = useMutation({
+    mutationFn: (body: { title: string; body?: string }) =>
+      apiFetch('/notifications/broadcast', { method: 'POST', body: JSON.stringify(body) }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['announcements'] }),
+  });
 
   const [gym, setGym] = useState<Gym | null>(null);
   useEffect(() => {
@@ -174,6 +189,37 @@ export default function SettingsPage() {
               </div>
             </li>
           ))}
+        </ul>
+      </Card>
+
+      <Card>
+        <h2 className="mb-4 font-semibold">Announcements</h2>
+        <form
+          className="mb-4 space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            broadcast.mutate({ title: String(f.get('title')), body: String(f.get('body') || '') || undefined });
+            e.currentTarget.reset();
+          }}
+        >
+          <Input label="Title" name="title" required />
+          <Input label="Message" name="body" />
+          <Button type="submit" disabled={broadcast.isPending}>
+            {broadcast.isPending ? 'Posting…' : 'Post to all members'}
+          </Button>
+        </form>
+        <ul className="divide-y divide-slate-100 text-sm">
+          {(announcementsQ.data ?? []).map((a) => (
+            <li key={a.id} className="py-2">
+              <div className="font-medium">{a.title}</div>
+              {a.body && <div className="text-slate-500">{a.body}</div>}
+              <div className="text-xs text-slate-400">{new Date(a.createdAt).toLocaleDateString()}</div>
+            </li>
+          ))}
+          {(announcementsQ.data ?? []).length === 0 && (
+            <li className="py-2 text-slate-400">No announcements yet.</li>
+          )}
         </ul>
       </Card>
     </div>
