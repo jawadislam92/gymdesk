@@ -10,6 +10,7 @@ read these in order and be fully current — no re-discovery needed.
 | 3 | [`DECISIONS.md`](DECISIONS.md) | **Decisions + environment audit + solved gotchas.** Why things are the way they are, the local machine setup, and fixes for problems already solved (so we never re-debug them). |
 | 4 | [`PRODUCT_EXPANSION_PLAN.md`](PRODUCT_EXPANSION_PLAN.md) | **The full product scope (v2):** the four surfaces, ~80-feature catalog from market research, web-first tiered roadmap. The north star. |
 | 5 | [`PRODUCT_PLAN.md`](PRODUCT_PLAN.md) | Original technical plan: DB schema (§8), RBAC (§9), API (§14), security, pricing, launch. |
+| 6 | [`DEPLOYMENT.md`](DEPLOYMENT.md) | **Going online.** The owner's ~10-min "create 3 free accounts" steps + the full deploy runbook (build/start commands, env vars, go-live checklist). Read when ready to leave local. |
 
 ## How to keep these current (the rule)
 - **When you finish a feature:** tick its box in `BUILD_TRACKER.md` and add a one-line note.

@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
+import { Activity, Building2, DollarSign, Users } from 'lucide-react';
 import { Badge, Button, Card, Input, Select } from '@/components/ui';
 
 interface Overview {
@@ -78,28 +79,44 @@ export default function PlatformPage() {
   const o = overviewQ.data;
   const gyms = gymsQ.data ?? [];
   const kpis = [
-    { label: 'Gyms', value: o?.totalGyms ?? '—' },
-    { label: 'Active gyms', value: o?.activeGyms ?? '—' },
-    { label: 'Members (all gyms)', value: o?.totalMembers ?? '—' },
-    { label: 'Revenue (all gyms)', value: o ? `$${o.totalRevenue.toLocaleString()}` : '—' },
+    { label: 'Gyms', value: o?.totalGyms ?? '—', icon: Building2, tint: 'bg-indigo-100 text-brand' },
+    { label: 'Active gyms', value: o?.activeGyms ?? '—', icon: Activity, tint: 'bg-green-100 text-green-600' },
+    { label: 'Members (all gyms)', value: o?.totalMembers ?? '—', icon: Users, tint: 'bg-blue-100 text-blue-600' },
+    {
+      label: 'Revenue (all gyms)',
+      value: o ? `$${o.totalRevenue.toLocaleString()}` : '—',
+      icon: DollarSign,
+      tint: 'bg-amber-100 text-amber-600',
+    },
   ];
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Platform overview</h1>
+      <div className="mb-6 flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Platform overview</h1>
+          <p className="text-sm text-slate-500">Manage every gym and its subscription from one place.</p>
+        </div>
         <Button onClick={() => setShowAdd((v) => !v)}>{showAdd ? 'Close' : 'Add gym'}</Button>
       </div>
 
       {notice && <div className="mb-4 rounded-lg bg-slate-100 px-4 py-2 text-sm text-slate-700">{notice}</div>}
 
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {kpis.map((k) => (
-          <Card key={k.label}>
-            <div className="text-sm text-slate-500">{k.label}</div>
-            <div className="mt-1 text-3xl font-bold">{k.value}</div>
-          </Card>
-        ))}
+        {kpis.map((k) => {
+          const Icon = k.icon;
+          return (
+            <Card key={k.label} className="flex items-center gap-4">
+              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${k.tint}`}>
+                <Icon size={22} />
+              </div>
+              <div>
+                <div className="text-sm text-slate-500">{k.label}</div>
+                <div className="text-2xl font-bold text-slate-800">{k.value}</div>
+              </div>
+            </Card>
+          );
+        })}
       </div>
 
       {showAdd && (

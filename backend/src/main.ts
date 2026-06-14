@@ -15,8 +15,14 @@ async function bootstrap(): Promise<void> {
   // Validate all incoming DTOs against their zod schemas.
   app.useGlobalPipes(new ZodValidationPipe());
 
-  // CORS for the web/desktop/mobile clients (tighten the allowlist in prod).
-  app.enableCors({ origin: true, credentials: true });
+  // CORS for the web/desktop/mobile clients.
+  // Local dev (no CORS_ORIGIN set): reflect any origin so localhost just works.
+  // Production: set CORS_ORIGIN to a comma-separated allowlist, e.g.
+  //   CORS_ORIGIN=https://app.yourgym.com,https://admin.yourgym.com
+  const corsOrigin = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+    : true;
+  app.enableCors({ origin: corsOrigin, credentials: true });
 
   // OpenAPI / Swagger docs at /api/docs (outside the version prefix).
   const swaggerConfig = new DocumentBuilder()

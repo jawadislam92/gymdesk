@@ -141,7 +141,10 @@
 ## Cross-cutting / launch readiness
 - [ ] Automated tests (auth + payments first), then E2E (Playwright)
 - [ ] CI pipeline (lint/typecheck/test/build)
-- [ ] **The "online move":** managed Postgres/Redis (Neon/Upstash/Railway), deploy, backups 🔌
+- [~] **The "online move":** managed Postgres/Redis (Neon/Upstash/Railway), deploy, backups 🔌
+      — **my side ready:** full deploy runbook, env template, build/start commands, and
+      env-configurable CORS done (see [`DEPLOYMENT.md`](DEPLOYMENT.md)); prod `next build` +
+      `nest build` both pass. Awaits owner's 3 free accounts (Neon/Upstash/Railway).
 - [ ] Security review (§15) before public launch
 - [ ] Onboard 1 real gym (beta) for feedback (§17)
 
@@ -198,3 +201,8 @@
 - 2026-06-15 — POS/retail: `products` + `sales` tables; `PosModule` (products CRUD, quick
   sell w/ stock decrement + guard, recent sales + today total; PAYMENTS_COLLECT). Web `/shop`
   page + nav. Verified: Whey Protein, sold ×2=$80, stock 10→8, overspend → 409.
+- 2026-06-15 — Polish + deploy-readiness pass: platform console upgraded to premium
+  (subtitle + colored icon-tile KPIs, matching gym dashboard). Env-configurable CORS
+  (`CORS_ORIGIN`, safe local default) + `.env.example` updated. Wrote `docs/DEPLOYMENT.md`
+  (owner's 3-account steps + full deploy runbook). Verified prod `next build` + `nest build`
+  pass; backend healthy after CORS change. (Owner can't do their side yet — finishing my side.)
