@@ -5,6 +5,7 @@ import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { Badge, Button, Card, Input, Select } from '@/components/ui';
+import { dateStamp, downloadCsv } from '@/lib/csv';
 
 interface Member {
   id: string;
@@ -38,6 +39,7 @@ export default function MembersPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [sellFor, setSellFor] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   const membersQuery = useQuery({
     queryKey: ['members', search],
@@ -90,6 +92,34 @@ export default function MembersPage() {
     });
   }
 
+  async function exportCsv() {
+    setExporting(true);
+    try {
+      const all: Member[] = [];
+      let page = 1;
+      for (;;) {
+        const res = await apiFetch<Paginated<Member>>(
+          `/members?page=${page}&pageSize=100${search ? `&search=${encodeURIComponent(search)}` : ''}`,
+        );
+        all.push(...res.data);
+        if (all.length >= res.meta.total || res.data.length === 0) break;
+        page += 1;
+      }
+      downloadCsv(
+        `members-${dateStamp()}.csv`,
+        all.map((m) => ({
+          code: m.memberCode,
+          name: m.fullName ?? '',
+          phone: m.phone ?? '',
+          email: m.email ?? '',
+          status: m.status,
+        })),
+      );
+    } finally {
+      setExporting(false);
+    }
+  }
+
   const members = membersQuery.data?.data ?? [];
   const plans = plansQuery.data ?? [];
 
@@ -97,7 +127,12 @@ export default function MembersPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Members</h1>
-        <Button onClick={() => setShowAdd((v) => !v)}>{showAdd ? 'Close' : 'Add member'}</Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={exportCsv} disabled={exporting}>
+            {exporting ? 'Exporting…' : 'Export CSV'}
+          </Button>
+          <Button onClick={() => setShowAdd((v) => !v)}>{showAdd ? 'Close' : 'Add member'}</Button>
+        </div>
       </div>
 
       {notice && (

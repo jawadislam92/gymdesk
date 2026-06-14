@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
 import { Button, Card, Input, Select } from '@/components/ui';
+import { dateStamp, downloadCsv } from '@/lib/csv';
 
 interface Member {
   id: string;
@@ -27,6 +28,7 @@ interface Paginated<T> {
 export default function PaymentsPage() {
   const qc = useQueryClient();
   const [notice, setNotice] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   const paymentsQuery = useQuery({
     queryKey: ['payments'],
@@ -57,12 +59,43 @@ export default function PaymentsPage() {
     });
   }
 
+  async function exportCsv() {
+    setExporting(true);
+    try {
+      const all: Payment[] = [];
+      let page = 1;
+      for (;;) {
+        const res = await apiFetch<Paginated<Payment>>(`/payments?page=${page}&pageSize=100`);
+        all.push(...res.data);
+        if (all.length >= res.meta.total || res.data.length === 0) break;
+        page += 1;
+      }
+      downloadCsv(
+        `payments-${dateStamp()}.csv`,
+        all.map((p) => ({
+          invoice: p.invoiceNumber ?? '',
+          member: p.memberName ?? p.memberCode ?? '',
+          method: p.method,
+          amount: p.amount,
+          date: p.paidAt ? new Date(p.paidAt).toISOString().slice(0, 10) : '',
+        })),
+      );
+    } finally {
+      setExporting(false);
+    }
+  }
+
   const payments = paymentsQuery.data?.data ?? [];
   const members = membersQuery.data?.data ?? [];
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Payments</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Payments</h1>
+        <Button variant="ghost" onClick={exportCsv} disabled={exporting}>
+          {exporting ? 'Exporting…' : 'Export CSV'}
+        </Button>
+      </div>
 
       <Card className="mb-6">
         <h2 className="mb-4 font-semibold">Record a payment</h2>
