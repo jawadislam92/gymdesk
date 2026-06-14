@@ -4,6 +4,12 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
+import { MembersModule } from './members/members.module';
+import { PlansModule } from './plans/plans.module';
+import { MembershipsModule } from './memberships/memberships.module';
+import { PaymentsModule } from './payments/payments.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -12,8 +18,12 @@ import { HealthModule } from './health/health.module';
     RedisModule,
     AuthModule,
     HealthModule,
-    // Feature modules (gyms, members, plans, memberships, payments,
-    // attendance, …) are added here as they are built — see PRODUCT_PLAN.md §12.
+    MembersModule,
+    PlansModule,
+    MembershipsModule,
+    PaymentsModule,
+    AttendanceModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

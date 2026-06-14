@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { GENDER } from '../constants/statuses';
+import { GENDER, MEMBER_STATUS } from '../constants/statuses';
+import { paginationQuerySchema } from './common';
 
 export const createMemberSchema = z.object({
   fullName: z.string().min(1).max(120),
@@ -15,3 +16,16 @@ export type CreateMemberInput = z.infer<typeof createMemberSchema>;
 
 export const updateMemberSchema = createMemberSchema.partial();
 export type UpdateMemberInput = z.infer<typeof updateMemberSchema>;
+
+export const memberListQuerySchema = paginationQuerySchema.extend({
+  status: z
+    .enum([
+      MEMBER_STATUS.ACTIVE,
+      MEMBER_STATUS.FROZEN,
+      MEMBER_STATUS.EXPIRED,
+      MEMBER_STATUS.CANCELLED,
+    ])
+    .optional(),
+  trainerId: z.string().uuid().optional(),
+});
+export type MemberListQuery = z.infer<typeof memberListQuerySchema>;

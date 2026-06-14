@@ -169,9 +169,9 @@ model Gym {
 model User {
   id              String    @id @default(uuid())
   gymId           String?   @map("gym_id") // null for super_admin
-  email           String    @unique
+  email           String?   @unique // null for walk-in members without a login
   phone           String?
-  passwordHash    String    @map("password_hash")
+  passwordHash    String?   @map("password_hash") // null until login credentials are set
   fullName        String    @map("full_name")
   avatarUrl       String?   @map("avatar_url")
   isActive        Boolean   @default(true) @map("is_active")

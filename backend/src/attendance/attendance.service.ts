@@ -1,0 +1,69 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import type { CheckInInput } from '@gymflow/shared';
+import { PrismaService } from '../prisma/prisma.service';
+import { startOfDay } from '../common/date';
+
+@Injectable()
+export class AttendanceService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  /** Check a member in and report whether their membership is currently valid. */
+  async checkIn(gymId: string, dto: CheckInInput, recordedById?: string) {
+    const member = await this.prisma.member.findFirst({
+      where: {
+        gymId,
+        deletedAt: null,
+        ...(dto.memberId ? { id: dto.memberId } : { memberCode: dto.memberCode }),
+      },
+      include: {
+        user: { select: { fullName: true } },
+        memberships: { where: { status: 'active' }, orderBy: { endDate: 'desc' }, take: 1 },
+      },
+    });
+    if (!member) throw new NotFoundException('Member not found');
+
+    const active = member.memberships[0];
+    const valid = Boolean(active && active.endDate > new Date());
+
+    const attendance = await this.prisma.attendance.create({
+      data: { gymId, memberId: member.id, method: 'manual', recordedById: recordedById ?? null },
+    });
+
+    return {
+      valid,
+      attendance,
+      member: {
+        id: member.id,
+        memberCode: member.memberCode,
+        fullName: member.user?.fullName ?? null,
+        status: member.status,
+      },
+      membership: active ? { id: active.id, endDate: active.endDate } : null,
+    };
+  }
+
+  list(gymId: string, dateStr?: string, memberId?: string) {
+    const where: Prisma.AttendanceWhereInput = { gymId, ...(memberId ? { memberId } : {}) };
+    if (dateStr) {
+      const start = startOfDay(new Date(dateStr));
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      where.checkedInAt = { gte: start, lt: end };
+    }
+    return this.prisma.attendance.findMany({
+      where,
+      include: { member: { select: { memberCode: true, user: { select: { fullName: true } } } } },
+      orderBy: { checkedInAt: 'desc' },
+      take: 200,
+    });
+  }
+
+  async summary(gymId: string) {
+    const start = startOfDay();
+    const checkIns = await this.prisma.attendance.count({
+      where: { gymId, checkedInAt: { gte: start } },
+    });
+    return { date: start.toISOString().slice(0, 10), checkIns };
+  }
+}
