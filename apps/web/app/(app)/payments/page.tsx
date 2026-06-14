@@ -5,6 +5,7 @@ import { useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
 import { Button, Card, Input, Select } from '@/components/ui';
 import { dateStamp, downloadCsv } from '@/lib/csv';
+import { printReceipt } from '@/lib/receipt';
 
 interface Member {
   id: string;
@@ -30,6 +31,11 @@ export default function PaymentsPage() {
   const [notice, setNotice] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
+  const gymQuery = useQuery({
+    queryKey: ['gym'],
+    queryFn: () =>
+      apiFetch<{ name: string; currency: string; address: string | null; city: string | null }>('/gym'),
+  });
   const paymentsQuery = useQuery({
     queryKey: ['payments'],
     queryFn: () => apiFetch<Paginated<Payment>>('/payments?pageSize=50'),
@@ -85,6 +91,21 @@ export default function PaymentsPage() {
     }
   }
 
+  function receiptFor(p: Payment) {
+    const g = gymQuery.data;
+    printReceipt({
+      gymName: g?.name ?? 'Gym',
+      gymAddress: [g?.address, g?.city].filter(Boolean).join(', ') || null,
+      title: 'Payment receipt',
+      reference: p.invoiceNumber ?? p.id,
+      dateLabel: p.paidAt ? new Date(p.paidAt).toLocaleString() : '—',
+      method: p.method,
+      currency: g?.currency ?? 'USD',
+      lines: [{ name: p.memberName ?? p.memberCode ?? 'Member', amount: p.amount }],
+      total: p.amount,
+    });
+  }
+
   const payments = paymentsQuery.data?.data ?? [];
   const members = membersQuery.data?.data ?? [];
 
@@ -136,6 +157,7 @@ export default function PaymentsPage() {
               <th className="px-4 py-3">Method</th>
               <th className="px-4 py-3 text-right">Amount</th>
               <th className="px-4 py-3">Date</th>
+              <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -148,11 +170,19 @@ export default function PaymentsPage() {
                 <td className="px-4 py-3 text-slate-500">
                   {p.paidAt ? new Date(p.paidAt).toLocaleDateString() : '—'}
                 </td>
+                <td className="px-4 py-3 text-right">
+                  <button
+                    onClick={() => receiptFor(p)}
+                    className="text-xs font-medium text-brand hover:underline"
+                  >
+                    Receipt
+                  </button>
+                </td>
               </tr>
             ))}
             {payments.length === 0 && !paymentsQuery.isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
                   No payments yet.
                 </td>
               </tr>

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
 import { Badge, Button, Card, Input } from '@/components/ui';
+import { printReceipt } from '@/lib/receipt';
 
 interface Product {
   id: string;
@@ -29,6 +30,11 @@ export default function ShopPage() {
   const qc = useQueryClient();
   const productsQ = useQuery({ queryKey: ['products'], queryFn: () => apiFetch<Product[]>('/pos/products') });
   const salesQ = useQuery({ queryKey: ['sales'], queryFn: () => apiFetch<SalesResp>('/pos/sales') });
+  const gymQ = useQuery({
+    queryKey: ['gym'],
+    queryFn: () =>
+      apiFetch<{ name: string; currency: string; address: string | null; city: string | null }>('/gym'),
+  });
 
   const invalidate = () => {
     void qc.invalidateQueries({ queryKey: ['products'] });
@@ -58,6 +64,21 @@ export default function ShopPage() {
       stock: Number(f.get('stock')) || 0,
     });
     e.currentTarget.reset();
+  }
+
+  function receiptFor(s: Sale) {
+    const g = gymQ.data;
+    printReceipt({
+      gymName: g?.name ?? 'Gym',
+      gymAddress: [g?.address, g?.city].filter(Boolean).join(', ') || null,
+      title: 'Sales receipt',
+      reference: s.id.slice(0, 8).toUpperCase(),
+      dateLabel: new Date(s.createdAt).toLocaleString(),
+      method: s.method,
+      currency: g?.currency ?? 'USD',
+      lines: [{ name: s.productName, qty: s.quantity, amount: s.total }],
+      total: s.total,
+    });
   }
 
   const products = productsQ.data ?? [];
@@ -155,6 +176,12 @@ export default function ShopPage() {
               </span>
               <span className="text-slate-500">{new Date(s.createdAt).toLocaleString()}</span>
               <span className="font-medium">${s.total}</span>
+              <button
+                onClick={() => receiptFor(s)}
+                className="text-xs font-medium text-brand hover:underline"
+              >
+                Receipt
+              </button>
             </li>
           ))}
           {sales.length === 0 && <li className="py-2 text-slate-400">No sales yet.</li>}
