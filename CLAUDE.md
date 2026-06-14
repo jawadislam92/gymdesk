@@ -1,6 +1,11 @@
 # GymFlow Suite — Project Context & Session Handoff
 
-> **Read this first.** It captures every decision and the current state so any new session can continue without re-explaining. The full spec is in [`docs/PRODUCT_PLAN.md`](docs/PRODUCT_PLAN.md) — that is the source of truth.
+> **Read this first**, then the docs system in [`docs/README.md`](docs/README.md). Together they
+> let any new session/agent continue cold — no re-discovery. Key docs:
+> [`docs/BUILD_TRACKER.md`](docs/BUILD_TRACKER.md) (living checklist — what's done/next),
+> [`docs/DECISIONS.md`](docs/DECISIONS.md) (decisions + env audit + solved gotchas),
+> [`docs/PRODUCT_EXPANSION_PLAN.md`](docs/PRODUCT_EXPANSION_PLAN.md) (full scope),
+> [`docs/PRODUCT_PLAN.md`](docs/PRODUCT_PLAN.md) (schema/RBAC/API).
 
 ## What this project is
 - **GymFlow Suite** — a commercial, multi-platform **gym management SaaS** (Web, Android, iOS, Windows, Mac) sold to gym owners, managers, trainers, reception staff, and members.
