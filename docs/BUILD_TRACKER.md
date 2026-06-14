@@ -35,12 +35,12 @@
 - [ ] Lead follow-up automation (tasks + reminders) (B)
 - [ ] Trial management (B)
 
-### A2. Scheduling, Classes & Booking  ← **NEXT UP**
-- [~] Classes: create/edit/cancel, capacity, trainer, location (B)
-- [~] Class schedule — week/calendar view (B/C/D)
-- [~] **Online class booking** + roster (B/C)
-- [ ] Waitlists (auto-promote when a spot frees) (B/C)
-- [ ] Recurring classes (weekly templates) (B)
+### A2. Scheduling, Classes & Booking
+- [x] Classes: create/edit/cancel, capacity, trainer, location (B)
+- [x] Class schedule — week calendar view w/ prev/next (B)
+- [x] **Online class booking** + roster + capacity & duplicate guard (B/C)
+- [x] Recurring classes (weekly copies via `repeatWeeks`) (B)
+- [ ] Waitlists (auto-promote when a spot frees) (B/C)  ← next in A2
 - [ ] Appointments / PT session booking (B/C)
 - [ ] Cancellation policy, late-cancel / no-show handling (B/C)
 - [ ] Class packs / credits (B/C)
@@ -143,4 +143,7 @@
 ### Change log (append one line per work session)
 - 2026-06-14 — Foundation + Gym-admin web app complete (members, plans, memberships,
   payments, attendance, dashboard, reports, staff, settings, trainers). Docs system created.
-  Started Phase A2 (scheduling & class booking).
+- 2026-06-14 — Phase A2: Classes & Scheduling shipped — backend classes/bookings module
+  (create + weekly recurrence, list, book w/ capacity & duplicate guard, cancel) + web
+  Schedule week view. Added `classes.manage` permission. Verified in-browser (Evening Yoga,
+  booked 1/10, double-book → 409).

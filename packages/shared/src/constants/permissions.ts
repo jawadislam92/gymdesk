@@ -21,11 +21,13 @@ export const PERMISSIONS = {
   PAYMENTS_REFUND: 'payments.refund',
   MEMBERSHIPS_RENEW: 'memberships.renew',
   ATTENDANCE_RECORD: 'attendance.record',
+  // Classes / scheduling
+  CLASSES_MANAGE: 'classes.manage', // create/edit the schedule
+  CLASSES_BOOK: 'classes.book',
   // Training
   WORKOUTS_MANAGE: 'workouts.manage', // workout + diet plans
   PROGRESS_RECORD: 'progress.record',
   MEMBER_NOTES_VIEW: 'memberNotes.view',
-  CLASSES_BOOK: 'classes.book',
   // Safety / audit
   RECORDS_HARD_DELETE: 'records.hardDelete',
   AUDIT_LOGS_VIEW: 'auditLogs.view',
@@ -54,10 +56,11 @@ export const ROLE_PERMISSIONS: Record<RoleName, PermissionKey[]> = {
     P.PAYMENTS_REFUND,
     P.MEMBERSHIPS_RENEW,
     P.ATTENDANCE_RECORD,
+    P.CLASSES_MANAGE,
+    P.CLASSES_BOOK,
     P.WORKOUTS_MANAGE,
     P.PROGRESS_RECORD,
     P.MEMBER_NOTES_VIEW,
-    P.CLASSES_BOOK,
     P.AUDIT_LOGS_VIEW,
   ],
   [ROLES.GYM_MANAGER]: [
@@ -71,13 +74,16 @@ export const ROLE_PERMISSIONS: Record<RoleName, PermissionKey[]> = {
     P.PAYMENTS_REFUND,
     P.MEMBERSHIPS_RENEW,
     P.ATTENDANCE_RECORD,
+    P.CLASSES_MANAGE,
+    P.CLASSES_BOOK,
     P.WORKOUTS_MANAGE,
     P.PROGRESS_RECORD,
     P.MEMBER_NOTES_VIEW,
-    P.CLASSES_BOOK,
     P.AUDIT_LOGS_VIEW, // limited in service layer
   ],
   [ROLES.TRAINER]: [
+    P.CLASSES_MANAGE, // own classes — scoped in service layer
+    P.CLASSES_BOOK,
     P.WORKOUTS_MANAGE, // own members only — enforced in service layer
     P.PROGRESS_RECORD,
     P.MEMBER_NOTES_VIEW,

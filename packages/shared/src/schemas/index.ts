@@ -7,3 +7,4 @@ export * from './payment';
 export * from './attendance';
 export * from './gym';
 export * from './staff';
+export * from './class';

@@ -10,6 +10,7 @@ const NAV = [
   { href: '/', label: 'Dashboard', perm: PERMISSIONS.DASHBOARD_VIEW },
   { href: '/members', label: 'Members', perm: PERMISSIONS.MEMBERS_MANAGE },
   { href: '/plans', label: 'Plans', perm: PERMISSIONS.PLANS_MANAGE },
+  { href: '/schedule', label: 'Schedule', perm: PERMISSIONS.CLASSES_BOOK },
   { href: '/trainers', label: 'Trainers', perm: PERMISSIONS.TRAINERS_MANAGE },
   { href: '/payments', label: 'Payments', perm: PERMISSIONS.PAYMENTS_COLLECT },
   { href: '/check-in', label: 'Check-in', perm: PERMISSIONS.ATTENDANCE_RECORD },
