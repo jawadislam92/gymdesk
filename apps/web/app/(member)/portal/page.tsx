@@ -51,6 +51,13 @@ interface ProgressRecord {
   weight: number | null;
   notes: string | null;
 }
+interface DietPlan {
+  id: string;
+  title: string;
+  targetCalories: number | null;
+  macros: { protein?: number; carbs?: number; fat?: number } | null;
+  meals: { name: string; items?: string }[] | null;
+}
 
 function fmt(iso: string) {
   return new Date(iso).toLocaleString([], {
@@ -84,6 +91,7 @@ export default function PortalPage() {
 
   const workoutsQ = useQuery({ queryKey: ['me-workouts'], queryFn: () => apiFetch<WorkoutPlan[]>('/me/workouts') });
   const progressQ = useQuery({ queryKey: ['me-progress'], queryFn: () => apiFetch<ProgressRecord[]>('/me/progress') });
+  const dietQ = useQuery({ queryKey: ['me-diet'], queryFn: () => apiFetch<DietPlan[]>('/me/diet') });
   const logProgress = useMutation({
     mutationFn: (body: { weight?: number; notes?: string }) =>
       apiFetch('/me/progress', { method: 'POST', body: JSON.stringify(body) }),
@@ -223,6 +231,33 @@ export default function PortalPage() {
           ))}
           {(progressQ.data ?? []).length === 0 && <li className="py-2 text-slate-400">No entries yet.</li>}
         </ul>
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">My diet</h2>
+        {dietQ.data?.[0] ? (
+          <div>
+            <div className="font-medium">{dietQ.data[0].title}</div>
+            <div className="text-sm text-slate-500">
+              {dietQ.data[0].targetCalories ? `${dietQ.data[0].targetCalories} kcal` : ''}
+              {dietQ.data[0].macros
+                ? ` · P${dietQ.data[0].macros.protein ?? 0}/C${dietQ.data[0].macros.carbs ?? 0}/F${dietQ.data[0].macros.fat ?? 0}`
+                : ''}
+            </div>
+            {dietQ.data[0].meals && dietQ.data[0].meals.length > 0 && (
+              <ul className="mt-2 list-disc pl-5 text-sm text-slate-600">
+                {dietQ.data[0].meals.map((m, i) => (
+                  <li key={i}>
+                    {m.name}
+                    {m.items ? `: ${m.items}` : ''}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400">No diet plan assigned yet.</p>
+        )}
       </Card>
 
       <Card>

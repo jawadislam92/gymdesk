@@ -4,9 +4,10 @@ import { MeService } from './me.service';
 import { ClassesModule } from '../classes/classes.module';
 import { WorkoutsModule } from '../workouts/workouts.module';
 import { ProgressModule } from '../progress/progress.module';
+import { DietModule } from '../diet/diet.module';
 
 @Module({
-  imports: [ClassesModule, WorkoutsModule, ProgressModule],
+  imports: [ClassesModule, WorkoutsModule, ProgressModule, DietModule],
   controllers: [MeController],
   providers: [MeService],
 })

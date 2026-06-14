@@ -40,6 +40,13 @@ interface PRecord {
   weight: number | null;
   notes: string | null;
 }
+interface DietPlan {
+  id: string;
+  title: string;
+  targetCalories: number | null;
+  macros: { protein?: number; carbs?: number; fat?: number } | null;
+  meals: { name: string; items?: string }[] | null;
+}
 interface Membership {
   id: string;
   status: string;
@@ -146,6 +153,12 @@ export default function MemberDetailPage() {
     mutationFn: (body: { weight?: number; notes?: string }) =>
       apiFetch('/progress', { method: 'POST', body: JSON.stringify({ ...body, memberId: id }) }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['progress', id] }),
+  });
+  const dietQ = useQuery({ queryKey: ['diet', id], queryFn: () => apiFetch<DietPlan[]>(`/diet-plans?memberId=${id}`) });
+  const createDiet = useMutation({
+    mutationFn: (body: Record<string, unknown>) =>
+      apiFetch('/diet-plans', { method: 'POST', body: JSON.stringify({ ...body, memberId: id }) }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['diet', id] }),
   });
 
   const member = memberQ.data;
@@ -337,6 +350,79 @@ export default function MemberDetailPage() {
             </li>
           ))}
         </ul>
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Nutrition</h2>
+        <form
+          className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            const meals = String(f.get('meals') || '')
+              .split('\n')
+              .map((l) => l.trim())
+              .filter(Boolean)
+              .map((l) => {
+                const i = l.indexOf(':');
+                return i >= 0 ? { name: l.slice(0, i).trim(), items: l.slice(i + 1).trim() } : { name: l };
+              });
+            const protein = Number(f.get('protein')) || undefined;
+            const carbs = Number(f.get('carbs')) || undefined;
+            const fat = Number(f.get('fat')) || undefined;
+            createDiet.mutate({
+              title: String(f.get('title')),
+              targetCalories: Number(f.get('calories')) || undefined,
+              macros: protein || carbs || fat ? { protein, carbs, fat } : undefined,
+              meals: meals.length ? meals : undefined,
+            });
+            e.currentTarget.reset();
+          }}
+        >
+          <div className="col-span-2 sm:col-span-4">
+            <Input label="Diet plan title" name="title" placeholder="e.g. Cutting plan" required />
+          </div>
+          <Input label="Calories" name="calories" type="number" min={0} />
+          <Input label="Protein (g)" name="protein" type="number" min={0} />
+          <Input label="Carbs (g)" name="carbs" type="number" min={0} />
+          <Input label="Fat (g)" name="fat" type="number" min={0} />
+          <label className="col-span-2 block text-sm sm:col-span-4">
+            <span className="mb-1 block font-medium text-slate-600">Meals (one per line — &quot;Name: items&quot;)</span>
+            <textarea
+              name="meals"
+              rows={3}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              placeholder={'Breakfast: oats, eggs\nLunch: chicken, rice'}
+            />
+          </label>
+          <div className="col-span-2 sm:col-span-4">
+            <Button type="submit" disabled={createDiet.isPending}>
+              Save diet plan
+            </Button>
+          </div>
+        </form>
+        <div className="space-y-2">
+          {(dietQ.data ?? []).map((d) => (
+            <div key={d.id} className="rounded-lg border border-slate-200 p-3 text-sm">
+              <div className="font-medium">{d.title}</div>
+              <div className="text-slate-500">
+                {d.targetCalories ? `${d.targetCalories} kcal` : ''}
+                {d.macros ? ` · P${d.macros.protein ?? 0}/C${d.macros.carbs ?? 0}/F${d.macros.fat ?? 0}` : ''}
+              </div>
+              {d.meals && d.meals.length > 0 && (
+                <ul className="mt-1 list-disc pl-5 text-slate-600">
+                  {d.meals.map((m, i) => (
+                    <li key={i}>
+                      {m.name}
+                      {m.items ? `: ${m.items}` : ''}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+          {(dietQ.data ?? []).length === 0 && <p className="text-sm text-slate-400">No diet plans yet.</p>}
+        </div>
       </Card>
 
       <Card>

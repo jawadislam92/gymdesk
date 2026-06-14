@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ClassesService } from '../classes/classes.service';
 import { WorkoutsService } from '../workouts/workouts.service';
 import { ProgressService } from '../progress/progress.service';
+import { DietService } from '../diet/diet.service';
 import { addDays } from '../common/date';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class MeService {
     private readonly classes: ClassesService,
     private readonly workouts: WorkoutsService,
     private readonly progress: ProgressService,
+    private readonly diet: DietService,
   ) {}
 
   private async resolveMember(gymId: string, userId: string) {
@@ -122,5 +124,10 @@ export class MeService {
   async logProgress(gymId: string, userId: string, dto: CreateProgressInput) {
     const m = await this.resolveMember(gymId, userId);
     return this.progress.create(gymId, m.id, dto, userId);
+  }
+
+  async myDiet(gymId: string, userId: string) {
+    const m = await this.resolveMember(gymId, userId);
+    return this.diet.listForMember(gymId, m.id);
   }
 }

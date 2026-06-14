@@ -106,7 +106,7 @@
 - [ ] Re-engagement / win-back automations (B)
 ### B3. Training & wellness depth
 - [~] Workout plans + exercises (assign + member view); exercise *library* + video TODO (B/C)
-- [ ] Nutrition / diet plans + macros (B/C)
+- [x] Nutrition / diet plans (calories, macros, meals): staff assign + member view (B/C)
 - [~] Progress: weight + body-fat + notes (staff record + member self-log + history);
       measurements/photos/PR-benchmarks TODO (B/C)
 - [ ] Wearable / health-app sync (C) 🔌
@@ -170,3 +170,7 @@
   Web: member-profile "Training" card (create plan, add exercises, record progress) +
   member-portal "My workout"/"My progress". Verified: owner created "Strength A"
   (Squat/Bench) → Alice sees it + logs her own weight (2 entries).
+- 2026-06-15 — Nutrition: `DietModule` (plans w/ calories, macros JSON, meals JSON;
+  WORKOUTS_MANAGE) + `/me/diet`. Web: member-profile "Nutrition" card (create) +
+  member-portal "My diet". Verified: owner created "Cutting plan" (2000 kcal, 2 meals)
+  → Alice sees it. Member portal now: status, classes, payments, workout, progress, diet.

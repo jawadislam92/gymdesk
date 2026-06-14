@@ -12,3 +12,4 @@ export * from './platform';
 export * from './lead';
 export * from './workout';
 export * from './progress';
+export * from './diet';
