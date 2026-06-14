@@ -32,6 +32,8 @@ interface AuthState {
   hasPermission: (permission: string) => boolean;
   /** True when the account is a plain member (no staff role) → member portal. */
   isMemberOnly: boolean;
+  /** True for the platform operator (super admin) → platform console. */
+  isPlatformAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -101,10 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isMemberOnly = Boolean(
     user && user.roles.includes('member') && !user.roles.some((r) => r !== 'member'),
   );
+  const isPlatformAdmin = Boolean(user?.permissions.includes('platform.manage'));
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, logout, hasPermission, isMemberOnly }}
+      value={{ user, loading, login, logout, hasPermission, isMemberOnly, isPlatformAdmin }}
     >
       {children}
     </AuthContext.Provider>

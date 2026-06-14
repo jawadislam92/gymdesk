@@ -20,7 +20,7 @@
 | Backend run | Dev/watch: `pnpm --filter @gymflow/backend dev`. Prebuilt: `node dist/main.js` (port 4000). **Restart pattern:** kill the process owning port 4000 (`Get-NetTCPConnection -LocalPort 4000`), then start again — do NOT `Stop-Process node` blindly (it also kills the web dev server). |
 | Web run | Next 15 dev on `:3000`. Preview via `.claude/launch.json` (session cwd `C:\Users\Jawad\Downloads\Claude`) using `cmd /c pnpm.cmd -C C:\laragon\www\gymdesk --filter @gymflow/web dev`. |
 | Browser preview | `mcp__Claude_Preview__*`. **Screenshots time out (CDP quirk on this machine)** — use `preview_snapshot` (accessibility tree) and `preview_eval` to verify instead. Login is prefilled with the demo owner. |
-| Demo login | `owner@demo.gym` / `Password123!` (seeded). Test data: member Alice (M0001), Coach Carter (trainer), Rita (receptionist). |
+| Demo logins | Gym owner `owner@demo.gym` / `Password123!`; **platform super-admin `admin@gymflow.app` / `Admin123!`** (→ /platform); member `alice@member.gym` / `Password123!` (→ /portal). Test data: member Alice (M0001), Coach Carter (trainer), Rita (receptionist). Login routes by role: platform→`/platform`, member→`/portal`, staff→`/`. |
 
 ---
 

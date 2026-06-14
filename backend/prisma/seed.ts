@@ -21,6 +21,27 @@ async function main(): Promise<void> {
   }
   console.log(`Seeded ${ALL_ROLES.length} system roles`);
 
+  // 1b) Platform super-admin (operates the SaaS — manages all gyms). gym_id stays null.
+  const superAdminRoleId = `system-${ROLES.SUPER_ADMIN}`;
+  const adminHash = await hash('Admin123!');
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@gymflow.app' },
+    update: {},
+    create: {
+      email: 'admin@gymflow.app',
+      passwordHash: adminHash,
+      fullName: 'Platform Admin',
+      emailVerifiedAt: new Date(),
+    },
+  });
+  const hasAdminRole = await prisma.userRole.findFirst({
+    where: { userId: admin.id, roleId: superAdminRoleId, gymId: null },
+  });
+  if (!hasAdminRole) {
+    await prisma.userRole.create({ data: { userId: admin.id, roleId: superAdminRoleId, gymId: null } });
+  }
+  console.log('Seeded platform admin → admin@gymflow.app / Admin123!');
+
   // 2) Demo gym.
   const gym = await prisma.gym.upsert({
     where: { slug: 'demo-gym' },

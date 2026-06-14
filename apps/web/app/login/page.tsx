@@ -20,7 +20,8 @@ export default function LoginPage() {
     try {
       const me = await login(email, password);
       const memberOnly = me.roles.includes('member') && !me.roles.some((r) => r !== 'member');
-      router.push(memberOnly ? '/portal' : '/');
+      const platform = me.permissions.includes('platform.manage');
+      router.push(platform ? '/platform' : memberOnly ? '/portal' : '/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

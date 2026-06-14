@@ -80,10 +80,11 @@
 - [ ] At-risk member report; class utilization / peak hours (B)
 
 ### A8. Platform Console skeleton (Surface A — "our side")
-- [ ] Super-admin login + tenant (gym) list & onboarding (A)
-- [ ] Create/suspend gyms; set their SaaS plan & limits (A)
-- [ ] Cross-gym revenue / MRR / active-gyms overview (A)
+- [x] Super-admin login (`admin@gymflow.app`) + gym list & onboarding (A)
+- [x] Create gyms (+ owner); set SaaS plan & status (suspend = status) (A)
+- [x] Cross-gym overview: total gyms / active / members / revenue (A)
 - [ ] "Log in as gym" (support impersonation) (A)
+- [ ] Per-tier feature gating / limits enforcement (A)
 
 ### A9. Platform plumbing
 - [x] Multi-tenant scoping + RBAC enforced server-side
@@ -153,3 +154,8 @@
   `grant-login` so staff create a member's credentials. Web: role-based routing, member
   portal (`apps/web/app/(member)/portal`) with membership status, my classes, self-book,
   payments. Verified in-browser: Alice logs in → portal → books a class.
+- 2026-06-15 — Phase A8: Platform Console ("our side") shipped — backend `/platform`
+  (super_admin only): cross-gym overview, gym list, onboard gym (+owner), update
+  subscription plan/status. Seeded `admin@gymflow.app` / `Admin123!`. Web `(platform)`
+  console with role-based routing. Verified in-browser + API (3 gyms, onboarded "Peak
+  Fitness", new owner logs in). **3 of 4 surfaces done; Public/landing (D) remains.**
