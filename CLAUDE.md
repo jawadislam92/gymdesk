@@ -57,5 +57,9 @@
 - **Do not** add Laravel/PHP/Python or any non-TypeScript backend.
 
 ## Key references
-- `docs/PRODUCT_PLAN.md` — full product & technical plan (features, schema, RBAC, MVP, roadmap, API, security, pricing, launch).
+- `docs/PRODUCT_PLAN.md` — original product & technical plan (schema, RBAC, MVP, API, security, pricing, launch).
+- `docs/PRODUCT_EXPANSION_PLAN.md` — **v2 scope (the full product):** the four surfaces
+  (Platform console / Gym admin / Member / Public), ~80-feature catalog from market
+  research, and the web-first tiered roadmap (Phase A "sellable core" → B → C). This is the
+  north star for everything beyond the MVP.
 - `README.md` — short repo overview.
