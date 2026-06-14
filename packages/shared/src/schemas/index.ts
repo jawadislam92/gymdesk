@@ -5,3 +5,5 @@ export * from './plan';
 export * from './membership';
 export * from './payment';
 export * from './attendance';
+export * from './gym';
+export * from './staff';

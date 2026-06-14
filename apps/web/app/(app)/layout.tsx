@@ -12,6 +12,7 @@ const NAV = [
   { href: '/plans', label: 'Plans', perm: PERMISSIONS.PLANS_MANAGE },
   { href: '/payments', label: 'Payments', perm: PERMISSIONS.PAYMENTS_COLLECT },
   { href: '/check-in', label: 'Check-in', perm: PERMISSIONS.ATTENDANCE_RECORD },
+  { href: '/settings', label: 'Settings', perm: PERMISSIONS.GYM_SETTINGS },
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {
