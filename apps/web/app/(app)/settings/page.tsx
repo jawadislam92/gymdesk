@@ -29,6 +29,13 @@ interface Announcement {
   body: string | null;
   createdAt: string;
 }
+interface Waiver {
+  id: string;
+  title: string;
+  body: string;
+  version: number;
+  acceptedCount: number;
+}
 
 export default function SettingsPage() {
   const qc = useQueryClient();
@@ -45,6 +52,12 @@ export default function SettingsPage() {
     mutationFn: (body: { title: string; body?: string }) =>
       apiFetch('/notifications/broadcast', { method: 'POST', body: JSON.stringify(body) }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['announcements'] }),
+  });
+  const waiverQ = useQuery({ queryKey: ['waiver'], queryFn: () => apiFetch<Waiver | null>('/waivers') });
+  const saveWaiver = useMutation({
+    mutationFn: (body: { title: string; body: string }) =>
+      apiFetch('/waivers', { method: 'POST', body: JSON.stringify(body) }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['waiver'] }),
   });
 
   const [gym, setGym] = useState<Gym | null>(null);
@@ -221,6 +234,45 @@ export default function SettingsPage() {
             <li className="py-2 text-slate-400">No announcements yet.</li>
           )}
         </ul>
+      </Card>
+
+      <Card>
+        <h2 className="mb-1 font-semibold">Membership agreement / waiver</h2>
+        <p className="mb-4 text-xs text-slate-400">
+          {waiverQ.data
+            ? `Version ${waiverQ.data.version} · accepted by ${waiverQ.data.acceptedCount} member(s)`
+            : 'No agreement published yet.'}
+        </p>
+        <form
+          key={waiverQ.data?.id ?? 'new'}
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            saveWaiver.mutate({ title: String(f.get('title')), body: String(f.get('body')) });
+          }}
+        >
+          <Input
+            label="Title"
+            name="title"
+            defaultValue={waiverQ.data?.title ?? 'Membership Agreement & Liability Waiver'}
+            required
+          />
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-600">Agreement text</span>
+            <textarea
+              name="body"
+              rows={6}
+              required
+              defaultValue={waiverQ.data?.body ?? ''}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              placeholder="Members must agree to the gym rules and liability terms…"
+            />
+          </label>
+          <Button type="submit" disabled={saveWaiver.isPending}>
+            {saveWaiver.isPending ? 'Publishing…' : 'Publish agreement'}
+          </Button>
+        </form>
       </Card>
     </div>
   );

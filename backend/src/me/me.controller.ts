@@ -72,6 +72,16 @@ export class MeController {
     return this.me.myNotifications(gymId, u.sub);
   }
 
+  @Get('waiver')
+  waiver(@GymId() gymId: string, @CurrentUser() u: AuthUser) {
+    return this.me.myWaiver(gymId, u.sub);
+  }
+
+  @Post('waiver/accept')
+  acceptWaiver(@GymId() gymId: string, @CurrentUser() u: AuthUser) {
+    return this.me.acceptWaiver(gymId, u.sub);
+  }
+
   @Post('progress')
   logProgress(@GymId() gymId: string, @Body() dto: CreateProgressDto, @CurrentUser() u: AuthUser) {
     return this.me.logProgress(gymId, u.sub, dto);

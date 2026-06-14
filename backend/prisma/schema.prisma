@@ -160,9 +160,11 @@ model Gym {
   notifications   Notification[]
   expenses        Expense[]
   auditLogs       AuditLog[]
-  exercises       Exercise[]
-  devices         Device[]
-  leads           Lead[]
+  exercises         Exercise[]
+  devices           Device[]
+  leads             Lead[]
+  waivers           Waiver[]
+  waiverAcceptances WaiverAcceptance[]
 
   @@map("gyms")
 }
@@ -259,6 +261,7 @@ model Member {
   dietPlans       DietPlan[]
   progressRecords ProgressRecord[]
   bookings        Booking[]
+  waiverAcceptances WaiverAcceptance[]
 
   @@unique([gymId, memberCode])
   @@index([gymId, status])
@@ -658,4 +661,37 @@ model Lead {
 
   @@index([gymId, status])
   @@map("leads")
+}
+
+model Waiver {
+  id        String   @id @default(uuid())
+  gymId     String   @map("gym_id")
+  title     String
+  body      String
+  version   Int      @default(1)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  gym         Gym                @relation(fields: [gymId], references: [id])
+  acceptances WaiverAcceptance[]
+
+  @@index([gymId, isActive])
+  @@map("waivers")
+}
+
+model WaiverAcceptance {
+  id         String   @id @default(uuid())
+  gymId      String   @map("gym_id")
+  waiverId   String   @map("waiver_id")
+  memberId   String   @map("member_id")
+  acceptedAt DateTime @default(now()) @map("accepted_at")
+  ipAddress  String?  @map("ip_address")
+
+  gym    Gym    @relation(fields: [gymId], references: [id])
+  waiver Waiver @relation(fields: [waiverId], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([waiverId, memberId])
+  @@index([gymId, memberId])
+  @@map("waiver_acceptances")
 }

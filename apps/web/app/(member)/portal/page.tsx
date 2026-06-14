@@ -64,6 +64,11 @@ interface Announcement {
   body: string | null;
   createdAt: string;
 }
+interface MyWaiver {
+  waiver: { id: string; title: string; body: string; version: number } | null;
+  accepted: boolean;
+  acceptedAt: string | null;
+}
 
 function fmt(iso: string) {
   return new Date(iso).toLocaleString([], {
@@ -99,6 +104,11 @@ export default function PortalPage() {
   const progressQ = useQuery({ queryKey: ['me-progress'], queryFn: () => apiFetch<ProgressRecord[]>('/me/progress') });
   const dietQ = useQuery({ queryKey: ['me-diet'], queryFn: () => apiFetch<DietPlan[]>('/me/diet') });
   const notificationsQ = useQuery({ queryKey: ['me-notifications'], queryFn: () => apiFetch<Announcement[]>('/me/notifications') });
+  const waiverQ = useQuery({ queryKey: ['me-waiver'], queryFn: () => apiFetch<MyWaiver>('/me/waiver') });
+  const acceptWaiver = useMutation({
+    mutationFn: () => apiFetch('/me/waiver/accept', { method: 'POST' }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['me-waiver'] }),
+  });
   const logProgress = useMutation({
     mutationFn: (body: { weight?: number; notes?: string }) =>
       apiFetch('/me/progress', { method: 'POST', body: JSON.stringify(body) }),
@@ -136,6 +146,18 @@ export default function PortalPage() {
           <p className="text-sm text-slate-400">No active membership — talk to the front desk to get started.</p>
         )}
       </Card>
+
+      {waiverQ.data?.waiver && !waiverQ.data.accepted && (
+        <Card className="border-amber-300 bg-amber-50">
+          <h2 className="font-semibold text-amber-800">{waiverQ.data.waiver.title}</h2>
+          <p className="mt-2 max-h-48 overflow-y-auto whitespace-pre-wrap text-sm text-slate-600">
+            {waiverQ.data.waiver.body}
+          </p>
+          <Button className="mt-3" disabled={acceptWaiver.isPending} onClick={() => acceptWaiver.mutate()}>
+            {acceptWaiver.isPending ? 'Saving…' : 'I accept'}
+          </Button>
+        </Card>
+      )}
 
       {(notificationsQ.data ?? []).length > 0 && (
         <Card>

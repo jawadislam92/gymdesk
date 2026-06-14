@@ -6,6 +6,7 @@ import { WorkoutsService } from '../workouts/workouts.service';
 import { ProgressService } from '../progress/progress.service';
 import { DietService } from '../diet/diet.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { WaiversService } from '../waivers/waivers.service';
 import { addDays } from '../common/date';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class MeService {
     private readonly progress: ProgressService,
     private readonly diet: DietService,
     private readonly notifications: NotificationsService,
+    private readonly waivers: WaiversService,
   ) {}
 
   private async resolveMember(gymId: string, userId: string) {
@@ -135,5 +137,16 @@ export class MeService {
 
   myNotifications(gymId: string, userId: string) {
     return this.notifications.listForUser(gymId, userId);
+  }
+
+  async myWaiver(gymId: string, userId: string) {
+    const m = await this.resolveMember(gymId, userId);
+    return this.waivers.forMember(gymId, m.id);
+  }
+
+  async acceptWaiver(gymId: string, userId: string) {
+    const m = await this.resolveMember(gymId, userId);
+    await this.waivers.accept(gymId, m.id);
+    return { accepted: true };
   }
 }

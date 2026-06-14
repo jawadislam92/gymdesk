@@ -30,7 +30,8 @@
 - [x] Member profile: history, payments, attendance, assign trainer (B)
 - [x] Membership lifecycle: assign / renew / freeze / cancel (B)
 - [ ] Member tags + custom fields (B)
-- [ ] **Digital contracts & e-signature**, liability waivers (B/C/D) 🔌
+- [x] **Membership agreement / waiver**: staff publish (versioned) + member accept-gate
+      + acceptance log; full e-sign/PDF still TODO (B/C)
 - [x] **Lead capture** (public-page enquiry → `leads`) + **staff Leads inbox** w/ status (B,D)
 - [ ] Sales pipeline / Kanban; lead follow-up automation (tasks + reminders) (B)
 - [ ] Trial management (B)
@@ -178,3 +179,7 @@
   user_id null; list) + `/me/notifications` (member feed = own + broadcasts). Web: Settings
   composer + member-portal Announcements feed. Verified: "Holiday hours" broadcast → Alice
   sees it. (Push/FCM + per-user read still TODO.)
+- 2026-06-15 — Waivers: `waivers` + `waiver_acceptances` tables; `WaiversModule` (staff
+  publish versioned agreement, GYM_SETTINGS) + `/me/waiver` (+ accept). Web: Settings editor
+  (version + accepted count) + member-portal accept-gate (re-accept on new version).
+  Verified: publish → Alice accepts → count 1; publish v2 → Alice sees gate again.
