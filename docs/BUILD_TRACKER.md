@@ -191,3 +191,6 @@
 - 2026-06-15 — Expenses + profit: `ExpensesModule` (CRUD, DASHBOARD_VIEW) + `/reports/expenses`
   (monthly SQL). Web `/expenses` page + nav; Reports adds Expenses chart + **Net profit**
   (revenue − expenses). Verified: $620 expenses vs $70 revenue → profit −$550.
+- 2026-06-15 — UI polish pass: added `lucide-react`; redesigned gym-admin sidebar (icons,
+  logo mark, avatar footer) + dashboard (greeting, icon KPI tiles, quick actions); member
+  portal (logo header, gradient membership card). Screenshots confirm a clean, premium look.

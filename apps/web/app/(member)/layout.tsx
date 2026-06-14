@@ -21,7 +21,10 @@ export default function MemberLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen">
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-        <div className="text-lg font-bold text-brand">GymFlow</div>
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand font-bold text-white">G</div>
+          <span className="text-lg font-bold">GymFlow</span>
+        </div>
         <div className="flex items-center gap-4 text-sm">
           <span className="text-slate-600">{user.fullName}</span>
           <button onClick={logout} className="text-slate-500 hover:text-slate-800">

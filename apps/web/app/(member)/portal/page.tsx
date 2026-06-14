@@ -128,24 +128,24 @@ export default function PortalPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Hi {s?.member.fullName ?? 'there'} 👋</h1>
 
-      <Card>
-        <h2 className="mb-2 text-sm font-semibold text-slate-500">Your membership</h2>
+      <div className="rounded-xl bg-gradient-to-br from-brand to-indigo-700 p-6 text-white shadow-sm">
+        <h2 className="mb-2 text-sm font-semibold text-indigo-100">Your membership</h2>
         {s?.membership ? (
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold">{s.membership.plan}</span>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-bold">{s.membership.plan}</span>
               <Badge tone={tone}>{s.membership.status}</Badge>
             </div>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-indigo-100">
               {dr !== null && dr > 0
                 ? `${dr} day${dr === 1 ? '' : 's'} remaining · ends ${new Date(s.membership.endDate).toLocaleDateString()}`
                 : `Expired on ${new Date(s.membership.endDate).toLocaleDateString()}`}
             </p>
           </div>
         ) : (
-          <p className="text-sm text-slate-400">No active membership — talk to the front desk to get started.</p>
+          <p className="text-sm text-indigo-100">No active membership — talk to the front desk to get started.</p>
         )}
-      </Card>
+      </div>
 
       {waiverQ.data?.waiver && !waiverQ.data.accepted && (
         <Card className="border-amber-300 bg-amber-50">
