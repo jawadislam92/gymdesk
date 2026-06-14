@@ -44,6 +44,7 @@ export default function ReportsPage() {
   const revenue = useQuery({ queryKey: ['report-revenue'], queryFn: () => apiFetch<Point[]>('/reports/revenue') });
   const growth = useQuery({ queryKey: ['report-growth'], queryFn: () => apiFetch<Point[]>('/reports/membership-growth') });
   const attendance = useQuery({ queryKey: ['report-attendance'], queryFn: () => apiFetch<Point[]>('/reports/attendance') });
+  const expenses = useQuery({ queryKey: ['report-expenses'], queryFn: () => apiFetch<Point[]>('/reports/expenses') });
 
   return (
     <div className="space-y-6">
@@ -62,6 +63,31 @@ export default function ReportsPage() {
         </div>
         <BarChart data={revenue.data ?? []} money />
       </Card>
+
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Card>
+          <h2 className="mb-4 font-semibold">Expenses (last 6 months)</h2>
+          <BarChart data={expenses.data ?? []} money />
+        </Card>
+        <Card>
+          <h2 className="mb-4 font-semibold">Net profit (6 months)</h2>
+          {(() => {
+            const rev = (revenue.data ?? []).reduce((s, p) => s + p.value, 0);
+            const exp = (expenses.data ?? []).reduce((s, p) => s + p.value, 0);
+            const profit = rev - exp;
+            return (
+              <div>
+                <div className={`text-4xl font-bold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  ${profit.toLocaleString()}
+                </div>
+                <div className="mt-2 text-sm text-slate-500">
+                  Revenue ${rev.toLocaleString()} − Expenses ${exp.toLocaleString()}
+                </div>
+              </div>
+            );
+          })()}
+        </Card>
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>

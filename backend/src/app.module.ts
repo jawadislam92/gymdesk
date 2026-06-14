@@ -25,6 +25,7 @@ import { DietModule } from './diet/diet.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { WaiversModule } from './waivers/waivers.module';
 import { RenewalsModule } from './renewals/renewals.module';
+import { ExpensesModule } from './expenses/expenses.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { RenewalsModule } from './renewals/renewals.module';
     NotificationsModule,
     WaiversModule,
     RenewalsModule,
+    ExpensesModule,
   ],
 })
 export class AppModule {}

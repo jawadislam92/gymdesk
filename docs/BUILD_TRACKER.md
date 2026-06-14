@@ -78,6 +78,7 @@
 
 ### A7. Reporting (deepen)
 - [x] Revenue / membership-growth / attendance charts + CSV (B)
+- [x] Expenses tracking (CRUD) + **net profit** (revenue − expenses) on Reports (B)
 - [ ] MRR / ARPU / retention / churn / cohort (B/A)
 - [ ] At-risk member report; class utilization / peak hours (B)
 
@@ -187,3 +188,6 @@
 - 2026-06-15 — Renewals/retention: `RenewalsModule` (GET expiring memberships, POST remind →
   member 'renewal' notification; MEMBERSHIPS_RENEW). Web `/renewals` page (window filter +
   Remind) + nav. Verified: 2 expiring → reminded Alice → she sees the renewal in her feed.
+- 2026-06-15 — Expenses + profit: `ExpensesModule` (CRUD, DASHBOARD_VIEW) + `/reports/expenses`
+  (monthly SQL). Web `/expenses` page + nav; Reports adds Expenses chart + **Net profit**
+  (revenue − expenses). Verified: $620 expenses vs $70 revenue → profit −$550.

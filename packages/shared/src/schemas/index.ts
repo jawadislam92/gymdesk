@@ -15,3 +15,4 @@ export * from './progress';
 export * from './diet';
 export * from './notification';
 export * from './waiver';
+export * from './expense';

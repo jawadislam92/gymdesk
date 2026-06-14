@@ -46,4 +46,13 @@ export class ReportsService {
       WHERE gym_id = ${gymId} AND checked_in_at >= ${daysAgo(days)}
       GROUP BY 1 ORDER BY 1`);
   }
+
+  expenses(gymId: string, months = 6) {
+    return this.prisma.$queryRaw<{ label: string; value: number }[]>(Prisma.sql`
+      SELECT to_char(date_trunc('month', incurred_on), 'YYYY-MM') AS label,
+             COALESCE(SUM(amount), 0)::float AS value
+      FROM expenses
+      WHERE gym_id = ${gymId} AND incurred_on >= ${monthsAgo(months)}
+      GROUP BY 1 ORDER BY 1`);
+  }
 }

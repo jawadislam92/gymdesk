@@ -16,6 +16,7 @@ const NAV = [
   { href: '/renewals', label: 'Renewals', perm: PERMISSIONS.MEMBERSHIPS_RENEW },
   { href: '/payments', label: 'Payments', perm: PERMISSIONS.PAYMENTS_COLLECT },
   { href: '/check-in', label: 'Check-in', perm: PERMISSIONS.ATTENDANCE_RECORD },
+  { href: '/expenses', label: 'Expenses', perm: PERMISSIONS.DASHBOARD_VIEW },
   { href: '/reports', label: 'Reports', perm: PERMISSIONS.DASHBOARD_VIEW },
   { href: '/settings', label: 'Settings', perm: PERMISSIONS.GYM_SETTINGS },
 ];

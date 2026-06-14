@@ -26,4 +26,9 @@ export class ReportsController {
   attendance(@GymId() gymId: string, @Query('days') days?: string) {
     return this.reports.attendance(gymId, days ? Number(days) : 14);
   }
+
+  @Get('expenses')
+  expenses(@GymId() gymId: string, @Query('months') months?: string) {
+    return this.reports.expenses(gymId, months ? Number(months) : 6);
+  }
 }
