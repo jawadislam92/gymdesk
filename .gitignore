@@ -43,3 +43,6 @@ apps/desktop/src-tauri/target/
 
 # Expo (mobile)
 apps/mobile/.expo/
+
+# Next.js generated types
+next-env.d.ts

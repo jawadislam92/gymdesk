@@ -33,7 +33,8 @@
 - ✅ **Database is live (local Postgres 16.6).** `init` migration applied (22 tables), seed loaded (6 roles + demo gym/owner/plans). `GET /api/v1/health` → `database:"up"`.
 - ✅ **Auth + RBAC live.** `AuthModule`: `register`/`login`/`refresh`/`logout`/`me`; argon2id hashing; JWT access + refresh with **Redis-backed rotation/revocation**; global `JwtAuthGuard` + `PermissionsGuard` with `@Public` / `@RequirePermissions` / `@CurrentUser` / `@GymId`. Permissions come from the seeded roles.
 - ✅ **Core feature modules live & verified end-to-end** (gym-scoped, RBAC-guarded, §14 routes): **members** (CRUD, auto code `M0001…`, search, soft-delete; identity on linked `User`), **membership-plans** (CRUD/archive), **memberships** (assign/renew/freeze/cancel + member status), **payments** (record + list, invoice `INV-YYYY-#####`), **attendance** (check-in w/ valid-membership banner, daily summary), **dashboard** (active/total members, expiring-soon, today check-ins, revenue MTD). Verified full loop: plan→member→membership→payment→check-in→dashboard.
-- 🚧 Not built yet: client apps (`apps/web|mobile|desktop`), `packages/ui` + `api-client`; reports/expenses/notifications; member-login/invite flow; tests.
+- ✅ **Web admin app (`apps/web`) live & building.** Next.js 15 (App Router) + Tailwind + TanStack Query; access token in memory + refresh token in localStorage (httpOnly-cookie migration is a cloud-hardening TODO, §15); role-gated nav from `me.permissions`. Screens: **login**, **dashboard** (KPI cards), **members** (search, add, "sell plan + charge"), **plans** (add/list), **payments** (record + list), **check-in** (reception, green/red validity banner + today's log). `next build` clean; verified both servers run and `/login` serves while the API reports `database:"up"`. One-click launch: `scripts\Start GymFlow App.bat` → http://localhost:3000.
+- 🚧 Not built yet: mobile/desktop apps, `packages/ui` + `api-client`; reports/expenses/notifications; member-login/invite flow; tests.
 
 ### Local environment notes (Windows + Laragon)
 - Node 22 + npm present. **pnpm 11.6** installed globally; the npm global bin `C:\Users\Jawad\AppData\Roaming\npm` was added to the User PATH. Tool-spawned shells may still need `$env:PATH = "$env:APPDATA\npm;$env:PATH"` prepended (they inherit a cached env).
@@ -44,10 +45,10 @@
 - **Schema-location deviation:** the Prisma schema lives in `backend/prisma/` (Prisma's convention), not the top-level `database/` sketched in §6. See `database/README.md`.
 
 ## Immediate next steps for a new session
-*(Start local services first: `scripts\services-start.ps1` — brings up Postgres + Redis.)*
-1. **Scaffold `apps/web`** (Next.js App Router + Tailwind + TanStack Query) + `packages/ui`; login → dashboard → members/plans/payments/attendance screens against the live API (`/api/v1`, JWT in httpOnly cookie or memory). Role-gated nav from `me.permissions`. Build order **web admin → desktop → mobile** (§12); MVP scope §10.
-2. **Member login/invite flow** (members currently have no credentials): endpoint to set email+password / send invite, assign the `member` role, so the mobile app can authenticate.
-3. Tests on auth + payments (§12 Phase 2 deliverable); generate `packages/api-client` from the OpenAPI at `/api/docs`. Later: reports, expenses, notifications (§12 Phase 6).
+*(One-click local run: `scripts\Start GymFlow App.bat` → http://localhost:3000, login `owner@demo.gym`/`Password123!`.)*
+1. **Expand the web app**: member profile page (history/payments/attendance), membership renew/freeze UI, settings (gym profile, staff/roles), reports. Extract shared UI into `packages/ui`; generate `packages/api-client` from the OpenAPI at `/api/docs`.
+2. **Member login/invite flow** (members have no credentials yet): endpoint to set email+password / send invite + assign the `member` role; then the **mobile app** (Expo) for members/trainers.
+3. **Cloud hardening (for the online move):** switch web auth to **httpOnly cookies** (drop localStorage), point `DATABASE_URL`/`REDIS_URL` at managed services (Neon/Upstash or Railway), secrets management, tests (auth + payments), CI, deploy (§12 Phase 6–7).
 
 ## Conventions
 - **Git author** for verified commits: `git config user.email noreply@anthropic.com && git config user.name Claude`.

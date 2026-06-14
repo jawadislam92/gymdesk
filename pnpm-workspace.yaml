@@ -11,3 +11,4 @@ allowBuilds:
   '@scarf/scarf': true
   prisma: true
   esbuild: true
+  sharp: true

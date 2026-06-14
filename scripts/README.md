@@ -24,6 +24,14 @@ Defaults (override with env vars if your install differs):
 - Postgres: `postgresql://postgres:postgres@localhost:5432/gymflow_dev`
 - Redis: `redis://127.0.0.1:6379`
 
+## Run the whole app (one click)
+
+**`Start GymFlow App.bat`** starts everything (Postgres + Redis + API + web app),
+then leave the window open and visit **http://localhost:3000** (sign in with
+`owner@demo.gym` / `Password123!`). It runs `services-start.ps1` then `pnpm dev`.
+
+To stop: press `Ctrl+C` in that window, then run `Stop GymFlow Services.bat`.
+
 ### Typical backend dev loop
 
 ```powershell
