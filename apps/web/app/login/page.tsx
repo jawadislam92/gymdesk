@@ -21,7 +21,7 @@ export default function LoginPage() {
       const me = await login(email, password);
       const memberOnly = me.roles.includes('member') && !me.roles.some((r) => r !== 'member');
       const platform = me.permissions.includes('platform.manage');
-      router.push(platform ? '/platform' : memberOnly ? '/portal' : '/');
+      router.push(platform ? '/platform' : memberOnly ? '/portal' : '/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

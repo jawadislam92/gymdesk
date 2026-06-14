@@ -7,7 +7,7 @@ import { PERMISSIONS } from '@gymflow/shared';
 import { useAuth } from '@/lib/auth';
 
 const NAV = [
-  { href: '/', label: 'Dashboard', perm: PERMISSIONS.DASHBOARD_VIEW },
+  { href: '/dashboard', label: 'Dashboard', perm: PERMISSIONS.DASHBOARD_VIEW },
   { href: '/members', label: 'Members', perm: PERMISSIONS.MEMBERS_MANAGE },
   { href: '/plans', label: 'Plans', perm: PERMISSIONS.PLANS_MANAGE },
   { href: '/schedule', label: 'Schedule', perm: PERMISSIONS.CLASSES_BOOK },
