@@ -13,6 +13,7 @@ const NAV = [
   { href: '/plans', label: 'Plans', perm: PERMISSIONS.PLANS_MANAGE },
   { href: '/schedule', label: 'Schedule', perm: PERMISSIONS.CLASSES_BOOK },
   { href: '/trainers', label: 'Trainers', perm: PERMISSIONS.TRAINERS_MANAGE },
+  { href: '/renewals', label: 'Renewals', perm: PERMISSIONS.MEMBERSHIPS_RENEW },
   { href: '/payments', label: 'Payments', perm: PERMISSIONS.PAYMENTS_COLLECT },
   { href: '/check-in', label: 'Check-in', perm: PERMISSIONS.ATTENDANCE_RECORD },
   { href: '/reports', label: 'Reports', perm: PERMISSIONS.DASHBOARD_VIEW },

@@ -73,7 +73,8 @@
 - [ ] Email sending (Resend/Postmark) — receipts, reminders, resets (B/C) 🔌
 - [ ] SMS (Twilio / local) (B/C) 🔌
 - [x] In-app announcements (broadcast → member portal feed); push (FCM) 🔌 + per-user read TODO (B/C)
-- [ ] Automated renewal / expiry reminders (BullMQ cron) (B)
+- [~] Renewals view (expiring memberships) + one-click reminder → member notification;
+      automated cron (BullMQ) + email/SMS delivery still TODO (B)
 
 ### A7. Reporting (deepen)
 - [x] Revenue / membership-growth / attendance charts + CSV (B)
@@ -183,3 +184,6 @@
   publish versioned agreement, GYM_SETTINGS) + `/me/waiver` (+ accept). Web: Settings editor
   (version + accepted count) + member-portal accept-gate (re-accept on new version).
   Verified: publish → Alice accepts → count 1; publish v2 → Alice sees gate again.
+- 2026-06-15 — Renewals/retention: `RenewalsModule` (GET expiring memberships, POST remind →
+  member 'renewal' notification; MEMBERSHIPS_RENEW). Web `/renewals` page (window filter +
+  Remind) + nav. Verified: 2 expiring → reminded Alice → she sees the renewal in her feed.

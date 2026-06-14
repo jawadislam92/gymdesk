@@ -24,6 +24,7 @@ import { ProgressModule } from './progress/progress.module';
 import { DietModule } from './diet/diet.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { WaiversModule } from './waivers/waivers.module';
+import { RenewalsModule } from './renewals/renewals.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { WaiversModule } from './waivers/waivers.module';
     DietModule,
     NotificationsModule,
     WaiversModule,
+    RenewalsModule,
   ],
 })
 export class AppModule {}
