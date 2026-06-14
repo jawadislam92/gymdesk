@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
-import { Badge, Button, Card } from '@/components/ui';
+import { Badge, Button, Card, Input } from '@/components/ui';
 
 interface Summary {
   member: { memberCode: string; fullName: string | null; status: string };
@@ -33,6 +33,24 @@ interface Payment {
   method: string;
   paidAt: string | null;
 }
+interface Exercise {
+  id: string;
+  name: string;
+  sets: number | null;
+  reps: number | null;
+}
+interface WorkoutPlan {
+  id: string;
+  title: string;
+  goal: string | null;
+  exercises: Exercise[];
+}
+interface ProgressRecord {
+  id: string;
+  recordedAt: string;
+  weight: number | null;
+  notes: string | null;
+}
 
 function fmt(iso: string) {
   return new Date(iso).toLocaleString([], {
@@ -62,6 +80,14 @@ export default function PortalPage() {
   const cancel = useMutation({
     mutationFn: (bookingId: string) => apiFetch(`/me/bookings/${bookingId}`, { method: 'DELETE' }),
     onSuccess: invalidate,
+  });
+
+  const workoutsQ = useQuery({ queryKey: ['me-workouts'], queryFn: () => apiFetch<WorkoutPlan[]>('/me/workouts') });
+  const progressQ = useQuery({ queryKey: ['me-progress'], queryFn: () => apiFetch<ProgressRecord[]>('/me/progress') });
+  const logProgress = useMutation({
+    mutationFn: (body: { weight?: number; notes?: string }) =>
+      apiFetch('/me/progress', { method: 'POST', body: JSON.stringify(body) }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['me-progress'] }),
   });
 
   const s = summaryQ.data;
@@ -138,6 +164,64 @@ export default function PortalPage() {
             );
           })}
           {available.length === 0 && <li className="py-3 text-sm text-slate-400">No classes available to book right now.</li>}
+        </ul>
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">My workout</h2>
+        {workoutsQ.data?.[0] ? (
+          <div>
+            <div className="font-medium">{workoutsQ.data[0].title}</div>
+            {workoutsQ.data[0].goal && <div className="text-sm text-slate-500">{workoutsQ.data[0].goal}</div>}
+            <ul className="mt-3 divide-y divide-slate-100 text-sm">
+              {workoutsQ.data[0].exercises.map((e) => (
+                <li key={e.id} className="flex justify-between py-2">
+                  <span>{e.name}</span>
+                  <span className="text-slate-500">
+                    {[e.sets && `${e.sets} sets`, e.reps && `${e.reps} reps`].filter(Boolean).join(' · ') || '—'}
+                  </span>
+                </li>
+              ))}
+              {workoutsQ.data[0].exercises.length === 0 && <li className="py-2 text-slate-400">No exercises yet.</li>}
+            </ul>
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400">No workout assigned yet — ask your trainer.</p>
+        )}
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">My progress</h2>
+        <form
+          className="mb-4 flex flex-wrap items-end gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            const weight = Number(f.get('weight'));
+            logProgress.mutate({
+              weight: weight > 0 ? weight : undefined,
+              notes: String(f.get('notes') || '') || undefined,
+            });
+            e.currentTarget.reset();
+          }}
+        >
+          <Input label="Weight (kg)" name="weight" type="number" step="0.1" min={0} />
+          <Input label="Note" name="notes" />
+          <Button type="submit" disabled={logProgress.isPending}>
+            Log
+          </Button>
+        </form>
+        <ul className="divide-y divide-slate-100 text-sm">
+          {(progressQ.data ?? []).map((p) => (
+            <li key={p.id} className="flex justify-between py-2">
+              <span className="text-slate-500">{new Date(p.recordedAt).toLocaleDateString()}</span>
+              <span>
+                {p.weight != null ? `${p.weight} kg` : ''}
+                {p.notes ? ` · ${p.notes}` : ''}
+              </span>
+            </li>
+          ))}
+          {(progressQ.data ?? []).length === 0 && <li className="py-2 text-slate-400">No entries yet.</li>}
         </ul>
       </Card>
 

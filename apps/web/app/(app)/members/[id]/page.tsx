@@ -22,6 +22,24 @@ interface TrainerOption {
   id: string;
   fullName: string | null;
 }
+interface WPExercise {
+  id: string;
+  name: string;
+  sets: number | null;
+  reps: number | null;
+}
+interface WPlan {
+  id: string;
+  title: string;
+  goal: string | null;
+  exercises: WPExercise[];
+}
+interface PRecord {
+  id: string;
+  recordedAt: string;
+  weight: number | null;
+  notes: string | null;
+}
 interface Membership {
   id: string;
   status: string;
@@ -107,6 +125,27 @@ export default function MemberDetailPage() {
       apiFetch(`/members/${id}/grant-login`, { method: 'POST', body: JSON.stringify(body) }),
     onSuccess: () => setLoginMsg('Login created — the member can now sign in to the portal.'),
     onError: (e) => setLoginMsg((e as Error).message),
+  });
+
+  const workoutsQ = useQuery({ queryKey: ['workouts', id], queryFn: () => apiFetch<WPlan[]>(`/workout-plans?memberId=${id}`) });
+  const progressStaffQ = useQuery({ queryKey: ['progress', id], queryFn: () => apiFetch<PRecord[]>(`/progress?memberId=${id}`) });
+  const createWorkout = useMutation({
+    mutationFn: (body: { title: string; goal?: string }) =>
+      apiFetch('/workout-plans', { method: 'POST', body: JSON.stringify({ ...body, memberId: id }) }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['workouts', id] }),
+  });
+  const addExercise = useMutation({
+    mutationFn: (v: { planId: string; name: string; sets?: number; reps?: number }) =>
+      apiFetch(`/workout-plans/${v.planId}/exercises`, {
+        method: 'POST',
+        body: JSON.stringify({ name: v.name, sets: v.sets, reps: v.reps }),
+      }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['workouts', id] }),
+  });
+  const recordProgress = useMutation({
+    mutationFn: (body: { weight?: number; notes?: string }) =>
+      apiFetch('/progress', { method: 'POST', body: JSON.stringify({ ...body, memberId: id }) }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['progress', id] }),
   });
 
   const member = memberQ.data;
@@ -207,6 +246,97 @@ export default function MemberDetailPage() {
             ))}
           </Select>
         </div>
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Training</h2>
+        <form
+          className="mb-4 flex flex-wrap items-end gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            createWorkout.mutate({ title: String(f.get('title')), goal: String(f.get('goal') || '') || undefined });
+            e.currentTarget.reset();
+          }}
+        >
+          <Input label="New workout plan" name="title" placeholder="e.g. Strength A" required />
+          <Input label="Goal" name="goal" />
+          <Button type="submit" disabled={createWorkout.isPending}>
+            Add plan
+          </Button>
+        </form>
+
+        <div className="space-y-3">
+          {(workoutsQ.data ?? []).map((plan) => (
+            <div key={plan.id} className="rounded-lg border border-slate-200 p-3">
+              <div className="font-medium">
+                {plan.title}
+                {plan.goal ? ` — ${plan.goal}` : ''}
+              </div>
+              <ul className="mt-2 divide-y divide-slate-100 text-sm">
+                {plan.exercises.map((ex) => (
+                  <li key={ex.id} className="flex justify-between py-1">
+                    <span>{ex.name}</span>
+                    <span className="text-slate-500">
+                      {[ex.sets && `${ex.sets} sets`, ex.reps && `${ex.reps} reps`].filter(Boolean).join(' · ')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <form
+                className="mt-2 flex flex-wrap items-end gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const f = new FormData(e.currentTarget);
+                  addExercise.mutate({
+                    planId: plan.id,
+                    name: String(f.get('name')),
+                    sets: Number(f.get('sets')) || undefined,
+                    reps: Number(f.get('reps')) || undefined,
+                  });
+                  e.currentTarget.reset();
+                }}
+              >
+                <input name="name" placeholder="Exercise" required className="rounded border border-slate-300 px-2 py-1 text-sm" />
+                <input name="sets" type="number" min={0} placeholder="sets" className="w-16 rounded border border-slate-300 px-2 py-1 text-sm" />
+                <input name="reps" type="number" min={0} placeholder="reps" className="w-16 rounded border border-slate-300 px-2 py-1 text-sm" />
+                <Button variant="ghost" type="submit">
+                  + exercise
+                </Button>
+              </form>
+            </div>
+          ))}
+          {(workoutsQ.data ?? []).length === 0 && <p className="text-sm text-slate-400">No workout plans yet.</p>}
+        </div>
+
+        <h3 className="mb-2 mt-5 text-sm font-semibold text-slate-600">Progress</h3>
+        <form
+          className="mb-3 flex flex-wrap items-end gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            const w = Number(f.get('weight'));
+            recordProgress.mutate({ weight: w > 0 ? w : undefined, notes: String(f.get('notes') || '') || undefined });
+            e.currentTarget.reset();
+          }}
+        >
+          <Input label="Weight (kg)" name="weight" type="number" step="0.1" min={0} />
+          <Input label="Note" name="notes" />
+          <Button type="submit" disabled={recordProgress.isPending}>
+            Record
+          </Button>
+        </form>
+        <ul className="divide-y divide-slate-100 text-sm">
+          {(progressStaffQ.data ?? []).slice(0, 8).map((p) => (
+            <li key={p.id} className="flex justify-between py-1">
+              <span className="text-slate-500">{new Date(p.recordedAt).toLocaleDateString()}</span>
+              <span>
+                {p.weight != null ? `${p.weight} kg` : ''}
+                {p.notes ? ` · ${p.notes}` : ''}
+              </span>
+            </li>
+          ))}
+        </ul>
       </Card>
 
       <Card>

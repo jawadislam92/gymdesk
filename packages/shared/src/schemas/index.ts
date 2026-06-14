@@ -10,3 +10,5 @@ export * from './staff';
 export * from './class';
 export * from './platform';
 export * from './lead';
+export * from './workout';
+export * from './progress';

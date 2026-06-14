@@ -58,7 +58,7 @@
 - [x] Member login + "my membership" status & days remaining (C)
 - [x] **Book / cancel classes** myself (C)
 - [x] Payment history (receipt PDFs tracked under A3) (C)
-- [ ] My workouts (read) + my progress (C)
+- [x] My workouts (read) + my progress (log weight + history) (C)
 - [ ] Profile, notifications, QR check-in code (C)
 - [x] Member login/invite flow: staff "Create login" on member profile → sets
       credentials + assigns `member` role (B/C)
@@ -105,9 +105,10 @@
 - [ ] Reviews/reputation prompts; surveys / NPS (B/C)
 - [ ] Re-engagement / win-back automations (B)
 ### B3. Training & wellness depth
-- [ ] Workout program builder + exercise library (video) (B/C)
+- [~] Workout plans + exercises (assign + member view); exercise *library* + video TODO (B/C)
 - [ ] Nutrition / diet plans + macros (B/C)
-- [ ] Progress (measurements, body-fat, photos), PR/benchmark tracking (B/C)
+- [~] Progress: weight + body-fat + notes (staff record + member self-log + history);
+      measurements/photos/PR-benchmarks TODO (B/C)
 - [ ] Wearable / health-app sync (C) 🔌
 ### B4. Marketing automation
 - [ ] Email/SMS campaign builder + drip automations + segments (B) 🔌
@@ -164,3 +165,8 @@
   form) via `PublicModule`; **leads** table + `LeadsModule` + staff Leads inbox; lead link
   on Settings. Verified: public lead submit → appears in inbox (Prospect Pete, public_page).
   **All 4 surfaces now have a web presence.**
+- 2026-06-15 — Training: `WorkoutsModule` (plans + exercises, WORKOUTS_MANAGE) +
+  `ProgressModule` (PROGRESS_RECORD) + `/me` workouts/progress (read + member self-log).
+  Web: member-profile "Training" card (create plan, add exercises, record progress) +
+  member-portal "My workout"/"My progress". Verified: owner created "Strength A"
+  (Squat/Bench) → Alice sees it + logs her own weight (2 entries).

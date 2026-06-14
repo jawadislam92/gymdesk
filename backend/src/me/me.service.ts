@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { CreateProgressInput } from '@gymflow/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClassesService } from '../classes/classes.service';
+import { WorkoutsService } from '../workouts/workouts.service';
+import { ProgressService } from '../progress/progress.service';
 import { addDays } from '../common/date';
 
 @Injectable()
@@ -8,6 +11,8 @@ export class MeService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly classes: ClassesService,
+    private readonly workouts: WorkoutsService,
+    private readonly progress: ProgressService,
   ) {}
 
   private async resolveMember(gymId: string, userId: string) {
@@ -102,5 +107,20 @@ export class MeService {
     });
     if (!booking) throw new NotFoundException('Booking not found');
     return this.classes.cancelBooking(gymId, bookingId);
+  }
+
+  async myWorkouts(gymId: string, userId: string) {
+    const m = await this.resolveMember(gymId, userId);
+    return this.workouts.listForMember(gymId, m.id);
+  }
+
+  async myProgress(gymId: string, userId: string) {
+    const m = await this.resolveMember(gymId, userId);
+    return this.progress.listForMember(gymId, m.id);
+  }
+
+  async logProgress(gymId: string, userId: string, dto: CreateProgressInput) {
+    const m = await this.resolveMember(gymId, userId);
+    return this.progress.create(gymId, m.id, dto, userId);
   }
 }
