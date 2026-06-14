@@ -10,7 +10,7 @@ export const createMemberSchema = z.object({
   gender: z.enum([GENDER.MALE, GENDER.FEMALE, GENDER.OTHER]).optional(),
   emergencyContact: z.string().max(120).optional(),
   healthNotes: z.string().max(2000).optional(),
-  assignedTrainerId: z.string().uuid().optional(),
+  assignedTrainerId: z.string().uuid().nullable().optional(),
 });
 export type CreateMemberInput = z.infer<typeof createMemberSchema>;
 

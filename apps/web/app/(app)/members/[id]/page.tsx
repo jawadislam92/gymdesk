@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
-import { Badge, Button, Card } from '@/components/ui';
+import { Badge, Button, Card, Select } from '@/components/ui';
 
 interface Member {
   id: string;
@@ -15,6 +15,11 @@ interface Member {
   status: string;
   joinedAt: string;
   healthNotes: string | null;
+  assignedTrainerId: string | null;
+}
+interface TrainerOption {
+  id: string;
+  fullName: string | null;
 }
 interface Membership {
   id: string;
@@ -80,6 +85,19 @@ export default function MemberDetailPage() {
       void qc.invalidateQueries({ queryKey: ['member', id] });
       void qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
+  });
+
+  const trainersQ = useQuery({
+    queryKey: ['trainers'],
+    queryFn: () => apiFetch<TrainerOption[]>('/trainers'),
+  });
+  const assignTrainer = useMutation({
+    mutationFn: (trainerId: string | null) =>
+      apiFetch(`/members/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ assignedTrainerId: trainerId }),
+      }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['member', id] }),
   });
 
   const member = memberQ.data;
@@ -164,6 +182,23 @@ export default function MemberDetailPage() {
           )}
         </Card>
       </div>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Assigned trainer</h2>
+        <div className="max-w-xs">
+          <Select
+            value={member?.assignedTrainerId ?? ''}
+            onChange={(e) => assignTrainer.mutate(e.target.value || null)}
+          >
+            <option value="">— None —</option>
+            {(trainersQ.data ?? []).map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.fullName}
+              </option>
+            ))}
+          </Select>
+        </div>
+      </Card>
 
       <Card>
         <h2 className="mb-3 font-semibold">Payments</h2>
