@@ -119,7 +119,8 @@
 ### B5. Access control & POS
 - [ ] QR + kiosk self check-in; door access integration (B) 🔌
 - [ ] Live occupancy; guest/day passes (B/C)
-- [ ] POS / retail + inventory (B)
+- [x] POS / retail + inventory: products (catalog + stock), quick-sell (stock
+      decrement + guard), recent sales + today total (B); multi-item cart TODO
 ### B6. Staff & operations
 - [ ] Staff scheduling, time clock (B)
 - [ ] Payroll & commissions (class/session/trainer) (B)
@@ -194,3 +195,6 @@
 - 2026-06-15 — UI polish pass: added `lucide-react`; redesigned gym-admin sidebar (icons,
   logo mark, avatar footer) + dashboard (greeting, icon KPI tiles, quick actions); member
   portal (logo header, gradient membership card). Screenshots confirm a clean, premium look.
+- 2026-06-15 — POS/retail: `products` + `sales` tables; `PosModule` (products CRUD, quick
+  sell w/ stock decrement + guard, recent sales + today total; PAYMENTS_COLLECT). Web `/shop`
+  page + nav. Verified: Whey Protein, sold ×2=$80, stock 10→8, overspend → 409.

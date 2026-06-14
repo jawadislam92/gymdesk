@@ -26,6 +26,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { WaiversModule } from './waivers/waivers.module';
 import { RenewalsModule } from './renewals/renewals.module';
 import { ExpensesModule } from './expenses/expenses.module';
+import { PosModule } from './pos/pos.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { ExpensesModule } from './expenses/expenses.module';
     WaiversModule,
     RenewalsModule,
     ExpensesModule,
+    PosModule,
   ],
 })
 export class AppModule {}
