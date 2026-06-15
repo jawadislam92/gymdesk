@@ -248,6 +248,8 @@ model Member {
   assignedTrainerId String?      @map("assigned_trainer_id")
   status            MemberStatus @default(active)
   checkInToken      String?      @unique @map("check_in_token")
+  referralCode      String?      @unique @map("referral_code")
+  referredById      String?      @map("referred_by_id")
   joinedAt          DateTime     @default(now()) @map("joined_at")
   createdAt         DateTime     @default(now()) @map("created_at")
   updatedAt         DateTime     @updatedAt @map("updated_at")
@@ -265,10 +267,25 @@ model Member {
   progressRecords ProgressRecord[]
   bookings        Booking[]
   waiverAcceptances WaiverAcceptance[]
+  loyaltyEntries  LoyaltyEntry[]
 
   @@unique([gymId, memberCode])
   @@index([gymId, status])
   @@map("members")
+}
+
+model LoyaltyEntry {
+  id        String   @id @default(uuid())
+  gymId     String   @map("gym_id")
+  memberId  String   @map("member_id")
+  points    Int
+  reason    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([gymId, memberId])
+  @@map("loyalty_entries")
 }
 
 model Trainer {

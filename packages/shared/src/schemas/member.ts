@@ -11,6 +11,7 @@ export const createMemberSchema = z.object({
   emergencyContact: z.string().max(120).optional(),
   healthNotes: z.string().max(2000).optional(),
   assignedTrainerId: z.string().uuid().nullable().optional(),
+  referredByCode: z.string().max(20).optional(),
 });
 export type CreateMemberInput = z.infer<typeof createMemberSchema>;
 

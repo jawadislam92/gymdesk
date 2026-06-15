@@ -239,3 +239,9 @@
   NOTE: hand-authored the migration (`20260615190000_member_checkin_token`) because `migrate dev`
   refuses non-interactive on a new unique constraint — apply with `migrate deploy`. Verified: token
   check-in (valid/Alice/date), invalid→404, `/k` page in-browser, manifest/icon/sw served. Deployed.
+- 2026-06-16 — **Compete-globally build #4: Loyalty Points & Referrals.** `loyalty_entries` ledger
+  + per-member referral codes. Auto-earn: +5/check-in (manual + QR), +100 when a referred member
+  joins (`referredByCode` on add-member). Member portal loyalty card (balance, referral code,
+  history); staff `/loyalty/:id` view + adjust. Verified: referral +100 → check-in +5 →
+  `/me/loyalty` shows 105/110 + code; portal card renders. Deployed live. NOTE: hand-authored
+  migration `20260616120000_loyalty_referrals`; fixed a DI miss (AttendanceModule imports LoyaltyModule).

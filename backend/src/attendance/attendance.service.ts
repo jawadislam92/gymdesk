@@ -3,10 +3,14 @@ import { Prisma } from '@prisma/client';
 import type { CheckInInput } from '@gymflow/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { startOfDay } from '../common/date';
+import { LoyaltyService, LOYALTY_POINTS } from '../loyalty/loyalty.service';
 
 @Injectable()
 export class AttendanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly loyalty: LoyaltyService,
+  ) {}
 
   /** Check a member in and report whether their membership is currently valid. */
   async checkIn(gymId: string, dto: CheckInInput, recordedById?: string) {
@@ -29,6 +33,7 @@ export class AttendanceService {
     const attendance = await this.prisma.attendance.create({
       data: { gymId, memberId: member.id, method: 'manual', recordedById: recordedById ?? null },
     });
+    await this.loyalty.award(gymId, member.id, LOYALTY_POINTS.CHECK_IN, 'Gym check-in');
 
     return {
       valid,
@@ -58,6 +63,7 @@ export class AttendanceService {
     await this.prisma.attendance.create({
       data: { gymId: member.gymId, memberId: member.id, method: 'qr', recordedById: null },
     });
+    await this.loyalty.award(member.gymId, member.id, LOYALTY_POINTS.CHECK_IN, 'QR check-in');
     return {
       valid,
       memberName: member.user?.fullName ?? null,

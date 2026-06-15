@@ -30,6 +30,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PosModule } from './pos/pos.module';
 import { BillingModule } from './billing/billing.module';
 import { AutomationsModule } from './automations/automations.module';
+import { LoyaltyModule } from './loyalty/loyalty.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { AutomationsModule } from './automations/automations.module';
     PosModule,
     BillingModule,
     AutomationsModule,
+    LoyaltyModule,
   ],
 })
 export class AppModule {}

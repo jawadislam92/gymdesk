@@ -49,7 +49,7 @@ export default function MembersPage() {
   const plansQuery = useQuery({ queryKey: ['plans'], queryFn: () => apiFetch<Plan[]>('/membership-plans') });
 
   const addMember = useMutation({
-    mutationFn: (body: { fullName: string; phone?: string; email?: string }) =>
+    mutationFn: (body: { fullName: string; phone?: string; email?: string; referredByCode?: string }) =>
       apiFetch<Member>('/members', { method: 'POST', body: JSON.stringify(body) }),
     onSuccess: (m) => {
       setShowAdd(false);
@@ -89,6 +89,7 @@ export default function MembersPage() {
       fullName: String(form.get('fullName')),
       phone: String(form.get('phone') || '') || undefined,
       email: String(form.get('email') || '') || undefined,
+      referredByCode: String(form.get('referredByCode') || '') || undefined,
     });
   }
 
@@ -145,6 +146,7 @@ export default function MembersPage() {
             <Input label="Full name" name="fullName" required />
             <Input label="Phone" name="phone" />
             <Input label="Email (optional)" name="email" type="email" />
+            <Input label="Referred by (code)" name="referredByCode" placeholder="optional" />
             <div className="sm:col-span-3">
               <Button type="submit" disabled={addMember.isPending}>
                 {addMember.isPending ? 'Saving…' : 'Save member'}

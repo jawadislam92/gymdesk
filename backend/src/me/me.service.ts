@@ -7,6 +7,7 @@ import { ProgressService } from '../progress/progress.service';
 import { DietService } from '../diet/diet.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { WaiversService } from '../waivers/waivers.service';
+import { LoyaltyService } from '../loyalty/loyalty.service';
 import { addDays } from '../common/date';
 
 @Injectable()
@@ -19,6 +20,7 @@ export class MeService {
     private readonly diet: DietService,
     private readonly notifications: NotificationsService,
     private readonly waivers: WaiversService,
+    private readonly loyalty: LoyaltyService,
   ) {}
 
   private async resolveMember(gymId: string, userId: string) {
@@ -138,6 +140,12 @@ export class MeService {
 
   myNotifications(gymId: string, userId: string) {
     return this.notifications.listForUser(gymId, userId);
+  }
+
+  async myLoyalty(gymId: string, userId: string) {
+    const m = await this.resolveMember(gymId, userId);
+    const summary = await this.loyalty.summary(m.id);
+    return { ...summary, referralCode: m.referralCode };
   }
 
   async myWaiver(gymId: string, userId: string) {

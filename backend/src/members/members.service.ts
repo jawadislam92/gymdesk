@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PasswordService } from '../auth/password.service';
 import { paginated, skip } from '../common/pagination';
 import { randomBytes } from 'node:crypto';
+import { LoyaltyService, LOYALTY_POINTS } from '../loyalty/loyalty.service';
 
 const memberInclude = {
   user: { select: { fullName: true, email: true, phone: true } },
@@ -17,12 +18,21 @@ export class MembersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly passwords: PasswordService,
+    private readonly loyalty: LoyaltyService,
   ) {}
 
   async create(gymId: string, dto: CreateMemberInput) {
     if (dto.email) {
       const taken = await this.prisma.user.findUnique({ where: { email: dto.email } });
       if (taken) throw new ConflictException('A user with this email already exists');
+    }
+
+    let referrer: { id: string } | null = null;
+    if (dto.referredByCode) {
+      referrer = await this.prisma.member.findFirst({
+        where: { gymId, referralCode: dto.referredByCode.trim().toUpperCase(), deletedAt: null },
+        select: { id: true },
+      });
     }
 
     const memberCode = await this.nextMemberCode(gymId);
@@ -36,6 +46,8 @@ export class MembersService {
           userId: user.id,
           memberCode,
           checkInToken: randomBytes(12).toString('hex'),
+          referralCode: randomBytes(4).toString('hex').toUpperCase(),
+          referredById: referrer?.id ?? null,
           dateOfBirth: dto.dateOfBirth ?? null,
           gender: dto.gender ?? null,
           emergencyContact: dto.emergencyContact ?? null,
@@ -45,6 +57,17 @@ export class MembersService {
         include: memberInclude,
       });
     });
+
+    // Reward the referrer once the new member exists.
+    if (referrer) {
+      await this.loyalty.award(
+        gymId,
+        referrer.id,
+        LOYALTY_POINTS.REFERRAL,
+        `Referred ${member.user?.fullName ?? 'a new member'}`,
+      );
+    }
+
     return this.shape(member);
   }
 

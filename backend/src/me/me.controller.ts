@@ -72,6 +72,11 @@ export class MeController {
     return this.me.myNotifications(gymId, u.sub);
   }
 
+  @Get('loyalty')
+  loyalty(@GymId() gymId: string, @CurrentUser() u: AuthUser) {
+    return this.me.myLoyalty(gymId, u.sub);
+  }
+
   @Get('waiver')
   waiver(@GymId() gymId: string, @CurrentUser() u: AuthUser) {
     return this.me.myWaiver(gymId, u.sub);

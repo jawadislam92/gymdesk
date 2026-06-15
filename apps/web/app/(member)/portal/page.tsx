@@ -71,6 +71,12 @@ interface MyWaiver {
   acceptedAt: string | null;
 }
 
+interface Loyalty {
+  balance: number;
+  referralCode: string | null;
+  history: { id: string; points: number; reason: string; createdAt: string }[];
+}
+
 function fmt(iso: string) {
   return new Date(iso).toLocaleString([], {
     weekday: 'short',
@@ -106,6 +112,7 @@ export default function PortalPage() {
   const dietQ = useQuery({ queryKey: ['me-diet'], queryFn: () => apiFetch<DietPlan[]>('/me/diet') });
   const notificationsQ = useQuery({ queryKey: ['me-notifications'], queryFn: () => apiFetch<Announcement[]>('/me/notifications') });
   const waiverQ = useQuery({ queryKey: ['me-waiver'], queryFn: () => apiFetch<MyWaiver>('/me/waiver') });
+  const loyaltyQ = useQuery({ queryKey: ['me-loyalty'], queryFn: () => apiFetch<Loyalty>('/me/loyalty') });
   const acceptWaiver = useMutation({
     mutationFn: () => apiFetch('/me/waiver/accept', { method: 'POST' }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['me-waiver'] }),
@@ -141,6 +148,37 @@ export default function PortalPage() {
           <div className="shrink-0 rounded-xl bg-white p-2">
             <QRCodeSVG value={`${origin}/k/${s.member.checkInToken}`} size={96} />
           </div>
+        </Card>
+      )}
+
+      {loyaltyQ.data && (
+        <Card>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Loyalty points</div>
+              <div className="text-3xl font-bold text-brand">{loyaltyQ.data.balance.toLocaleString()}</div>
+            </div>
+            {loyaltyQ.data.referralCode && (
+              <div className="text-right">
+                <div className="text-xs text-slate-400">Your referral code</div>
+                <div className="font-mono text-lg font-bold tracking-wider">{loyaltyQ.data.referralCode}</div>
+                <div className="text-xs text-slate-400">Earn 100 pts per friend who joins! 🎁</div>
+              </div>
+            )}
+          </div>
+          {loyaltyQ.data.history.length > 0 && (
+            <ul className="mt-4 divide-y divide-slate-100 border-t border-slate-100 pt-2 text-sm">
+              {loyaltyQ.data.history.slice(0, 5).map((h) => (
+                <li key={h.id} className="flex justify-between py-1.5">
+                  <span className="text-slate-600">{h.reason}</span>
+                  <span className={`font-medium ${h.points >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {h.points >= 0 ? '+' : ''}
+                    {h.points}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
 
