@@ -192,6 +192,32 @@ confirm step is already idempotent, so adding webhooks won't double-charge the b
 
 ---
 
+## 5b. Switching on the AI Receptionist (Anthropic / Claude)
+
+The AI receptionist is **built and config-gated**, the same way as Stripe — it stays
+dormant until a key exists. It's a chat assistant on each gym's public page that answers
+prospects' questions about plans and classes and **captures interested visitors straight
+into the CRM lead pipeline** (it calls a `capture_lead` tool that creates the lead, so the
+team gets a follow-up without the visitor filling in the form). Endpoints:
+`/api/v1/public/gyms/:slug/ai/{status,chat}`.
+
+To switch it on you only need **one** variable:
+
+| Variable (on `gymflow-api`) | Where to get it |
+|------------------------------|-----------------|
+| `ANTHROPIC_API_KEY` | console.anthropic.com → API keys (`sk-ant-…`) |
+| `AI_MODEL` *(optional)* | defaults to `claude-opus-4-8`; set to a cheaper model (e.g. `claude-haiku-4-5`) to trim per-chat cost |
+
+Once the key is set, `…/ai/status` flips to `enabled:true` and a floating "chat with us"
+bubble appears on the public gym page. No restart-time secrets beyond the key. **Entering
+the real key is your step, not mine** — I never handle API credentials.
+
+> Verified now (without a key): `…/ai/status` returns `enabled:false` and the chat widget
+> stays hidden; `…/ai/chat` returns a graceful "assistant offline" message instead of
+> erroring. Only a real Anthropic key (your step) can exercise a live conversation.
+
+---
+
 ## 6. Cost expectation
 
 On the free tiers (Neon + Upstash + Railway's starter), running a pilot with a few

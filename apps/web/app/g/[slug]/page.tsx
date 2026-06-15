@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
 import { Button, Card, Input } from '@/components/ui';
+import { AiChat } from './ai-chat';
 
 interface GymPage {
   gym: { name: string; city: string | null; country: string | null; logoUrl: string | null };
@@ -132,6 +133,8 @@ export default function PublicGymPage() {
       </section>
 
       <footer className="py-8 text-center text-xs text-slate-400">Powered by GymFlow Suite</footer>
+
+      <AiChat slug={slug} gymName={data.gym.name} />
     </div>
   );
 }

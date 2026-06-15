@@ -252,3 +252,13 @@
   Web: Renewals auto-renew toggle + run button; Payments "due" badge + Collect. Verified end-to-end:
   run → extended to 2026-07-15 + pending INV-2026-00004 ($35) → collect → paid. No schema change.
   Cash-ready now; flips to auto-charge once Stripe keys arrive.
+- 2026-06-16 — **Compete-globally build #6: AI Receptionist.** Config-gated (`ANTHROPIC_API_KEY`,
+  like Stripe) Claude chat assistant on the public gym page. New `backend/src/ai/` module
+  (`@anthropic-ai/sdk`, model `claude-opus-4-8`, overridable via `AI_MODEL`): answers prospects'
+  questions from live gym context (plans + class schedule) and **captures leads** via a `capture_lead`
+  tool wired to `LeadsService` (de-duped on phone/email, source `ai_receptionist`). Public endpoints
+  `/public/gyms/:slug/ai/{status,chat}`; input capped (≤20 msgs ×2000 chars) to protect the paid API.
+  Web: floating chat widget (`apps/web/app/g/[slug]/ai-chat.tsx`) that only renders when configured.
+  No schema change. Verified: dormant path (no key → widget hidden, chat returns graceful "offline");
+  enabled path (fake key → status flips, request reaches Anthropic, 401 caught gracefully); full
+  browser UX (open → greet → send → reply). Goes live once the owner adds an Anthropic key.
