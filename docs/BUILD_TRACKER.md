@@ -218,3 +218,11 @@
     checkout/confirm, idempotent recording; web Pay-by-card + confirm-on-return + dormant-state
     hint. Verified: 503 gating, 400 validation, request reaches Stripe with a (fake) key, status
     flips enabled:true/false. Live paid txn pending owner's Stripe test keys.
+- 2026-06-15 — **DEPLOYED LIVE to https://gymrun.tech** (Hostinger KVM2 VPS, Ubuntu/Paris):
+  PostgreSQL+Redis+Node/pm2+Nginx+Let's-Encrypt HTTPS. Verified end-to-end externally
+  (login + authed requests). See [[gymflow-deployment]] memory + `DEPLOYMENT.md`.
+- 2026-06-15 — **Compete-globally build #1: CRM Sales Pipeline.** Upgraded Leads → full funnel
+  (new/contacted/trial/negotiation/won/lost) + deal value + follow-ups + activity timeline
+  (note/call/whatsapp/email, auto-advance on first outreach) + convert-to-member (idempotent)
+  + pipeline KPIs (conversion rate, follow-ups due, open value). New `lead_activities` table.
+  Verified API (lead→member M0002, 100% conversion, re-convert 409) + in-browser board/panel.

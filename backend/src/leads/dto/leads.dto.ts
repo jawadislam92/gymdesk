@@ -1,5 +1,6 @@
 import { createZodDto } from 'nestjs-zod';
-import { createLeadSchema, updateLeadStatusSchema } from '@gymflow/shared';
+import { addLeadActivitySchema, createLeadSchema, updateLeadSchema } from '@gymflow/shared';
 
 export class CreateLeadDto extends createZodDto(createLeadSchema) {}
-export class UpdateLeadStatusDto extends createZodDto(updateLeadStatusSchema) {}
+export class UpdateLeadDto extends createZodDto(updateLeadSchema) {}
+export class AddLeadActivityDto extends createZodDto(addLeadActivitySchema) {}

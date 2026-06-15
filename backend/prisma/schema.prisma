@@ -648,21 +648,43 @@ model AuditLog {
 }
 
 model Lead {
-  id        String   @id @default(uuid())
-  gymId     String   @map("gym_id")
-  fullName  String   @map("full_name")
-  email     String?
-  phone     String?
-  message   String?
-  source    String? // e.g. "public_page"
-  status    String   @default("new") // new / contacted / converted / lost
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                String    @id @default(uuid())
+  gymId             String    @map("gym_id")
+  fullName          String    @map("full_name")
+  email             String?
+  phone             String?
+  message           String?
+  source            String? // e.g. "public_page"
+  status            String    @default("new") // new / contacted / trial / negotiation / won / lost
+  value             Decimal?  @db.Decimal(12, 2) // estimated deal value
+  followUpAt        DateTime? @map("follow_up_at")
+  assignedToId      String?   @map("assigned_to")
+  lostReason        String?   @map("lost_reason")
+  convertedMemberId String?   @map("converted_member_id")
+  lastActivityAt    DateTime? @map("last_activity_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
 
-  gym Gym @relation(fields: [gymId], references: [id])
+  gym        Gym            @relation(fields: [gymId], references: [id])
+  activities LeadActivity[]
 
   @@index([gymId, status])
   @@map("leads")
+}
+
+model LeadActivity {
+  id          String   @id @default(uuid())
+  gymId       String   @map("gym_id")
+  leadId      String   @map("lead_id")
+  type        String // note / call / whatsapp / email / stage_change / system
+  body        String?
+  createdById String?  @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([gymId, leadId])
+  @@map("lead_activities")
 }
 
 model Waiver {
