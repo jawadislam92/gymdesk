@@ -33,4 +33,9 @@ export class PaymentsController {
   create(@GymId() gymId: string, @Body() dto: CreatePaymentDto, @CurrentUser() user: AuthUser) {
     return this.payments.create(gymId, dto, user.sub);
   }
+
+  @Post(':id/collect')
+  collect(@GymId() gymId: string, @Param('id') id: string) {
+    return this.payments.collect(gymId, id);
+  }
 }

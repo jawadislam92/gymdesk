@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
-import { Button, Card, Input, Select } from '@/components/ui';
+import { Badge, Button, Card, Input, Select } from '@/components/ui';
 import { dateStamp, downloadCsv } from '@/lib/csv';
 import { printReceipt } from '@/lib/receipt';
 
@@ -17,6 +17,7 @@ interface Payment {
   invoiceNumber: string | null;
   amount: number;
   method: string;
+  status: string;
   memberName: string | null;
   memberCode: string | null;
   paidAt: string | null;
@@ -89,6 +90,15 @@ export default function PaymentsPage() {
       .catch((e: unknown) => setNotice((e as Error).message));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const collect = useMutation({
+    mutationFn: (id: string) => apiFetch(`/payments/${id}/collect`, { method: 'POST' }),
+    onSuccess: () => {
+      setNotice('Payment collected ✓');
+      void qc.invalidateQueries({ queryKey: ['payments'] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
 
   function onRecord(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -227,12 +237,22 @@ export default function PaymentsPage() {
               <tr key={p.id}>
                 <td className="px-4 py-3 font-mono text-xs">{p.invoiceNumber}</td>
                 <td className="px-4 py-3">{p.memberName ?? p.memberCode}</td>
-                <td className="px-4 py-3 capitalize text-slate-500">{p.method}</td>
+                <td className="px-4 py-3 capitalize text-slate-500">
+                  {p.method} {p.status === 'pending' && <Badge tone="amber">due</Badge>}
+                </td>
                 <td className="px-4 py-3 text-right font-medium">${p.amount}</td>
                 <td className="px-4 py-3 text-slate-500">
                   {p.paidAt ? new Date(p.paidAt).toLocaleDateString() : '—'}
                 </td>
                 <td className="px-4 py-3 text-right">
+                  {p.status === 'pending' && (
+                    <button
+                      onClick={() => collect.mutate(p.id)}
+                      className="mr-3 text-xs font-medium text-green-600 hover:underline"
+                    >
+                      Collect
+                    </button>
+                  )}
                   <button
                     onClick={() => receiptFor(p)}
                     className="text-xs font-medium text-brand hover:underline"

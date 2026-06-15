@@ -245,3 +245,10 @@
   history); staff `/loyalty/:id` view + adjust. Verified: referral +100 → check-in +5 →
   `/me/loyalty` shows 105/110 + code; portal card renders. Deployed live. NOTE: hand-authored
   migration `20260616120000_loyalty_referrals`; fixed a DI miss (AttendanceModule imports LoyaltyModule).
+- 2026-06-16 — **Compete-globally build #5: Auto-renew billing.** Per-membership auto-renew toggle;
+  daily `@Cron` + manual "Run auto-renewals" extends due memberships (reuses `renew`), raises a
+  **pending invoice** (revenue only counts once collected — dashboard already filters `status:paid`),
+  and notifies the member. Staff "Collect" marks pending paid (`PaymentsService.createPending`/`collect`).
+  Web: Renewals auto-renew toggle + run button; Payments "due" badge + Collect. Verified end-to-end:
+  run → extended to 2026-07-15 + pending INV-2026-00004 ($35) → collect → paid. No schema change.
+  Cash-ready now; flips to auto-charge once Stripe keys arrive.

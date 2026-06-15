@@ -83,6 +83,45 @@ export class PaymentsService {
     return this.shape(payment);
   }
 
+  /** Raise an unpaid invoice (e.g. an auto-renewal). Counts as revenue only once collected. */
+  async createPending(opts: {
+    gymId: string;
+    memberId: string;
+    membershipId?: string | null;
+    amount: number;
+    currency?: string;
+    gateway?: string;
+  }) {
+    const invoiceNumber = await this.nextInvoiceNumber(opts.gymId);
+    const payment = await this.prisma.payment.create({
+      data: {
+        gymId: opts.gymId,
+        memberId: opts.memberId,
+        membershipId: opts.membershipId ?? null,
+        amount: opts.amount,
+        currency: opts.currency ?? 'USD',
+        method: 'cash',
+        status: 'pending',
+        gateway: opts.gateway ?? 'auto_renew',
+        invoiceNumber,
+      },
+      include: paymentInclude,
+    });
+    return this.shape(payment);
+  }
+
+  /** Mark a pending invoice as collected (paid now). */
+  async collect(gymId: string, id: string) {
+    const payment = await this.prisma.payment.findFirst({ where: { id, gymId } });
+    if (!payment) throw new NotFoundException('Payment not found');
+    const updated = await this.prisma.payment.update({
+      where: { id },
+      data: { status: 'paid', paidAt: new Date() },
+      include: paymentInclude,
+    });
+    return this.shape(updated);
+  }
+
   async list(gymId: string, query: PaginationQuery & { memberId?: string }) {
     const where: Prisma.PaymentWhereInput = {
       gymId,
