@@ -46,6 +46,7 @@ export class MeService {
         memberCode: m.memberCode,
         fullName: m.user?.fullName ?? null,
         status: m.status,
+        checkInToken: m.checkInToken,
       },
       membership: membership
         ? {

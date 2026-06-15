@@ -4,6 +4,7 @@ import { type CreateMemberInput, type MemberListQuery, ROLES, type UpdateMemberI
 import { PrismaService } from '../prisma/prisma.service';
 import { PasswordService } from '../auth/password.service';
 import { paginated, skip } from '../common/pagination';
+import { randomBytes } from 'node:crypto';
 
 const memberInclude = {
   user: { select: { fullName: true, email: true, phone: true } },
@@ -34,6 +35,7 @@ export class MembersService {
           gymId,
           userId: user.id,
           memberCode,
+          checkInToken: randomBytes(12).toString('hex'),
           dateOfBirth: dto.dateOfBirth ?? null,
           gender: dto.gender ?? null,
           emergencyContact: dto.emergencyContact ?? null,

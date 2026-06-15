@@ -21,4 +21,10 @@ export class PublicController {
   lead(@Param('slug') slug: string, @Body() dto: CreateLeadDto) {
     return this.pub.submitLead(slug, dto);
   }
+
+  @Post('checkin/:token')
+  @HttpCode(200)
+  checkin(@Param('token') token: string) {
+    return this.pub.checkIn(token);
+  }
 }

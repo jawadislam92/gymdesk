@@ -3,9 +3,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
 import { Badge, Button, Card, Input } from '@/components/ui';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface Summary {
-  member: { memberCode: string; fullName: string | null; status: string };
+  member: { memberCode: string; fullName: string | null; status: string; checkInToken?: string | null };
   membership: { plan: string | null; status: string; endDate: string; daysRemaining: number | null } | null;
 }
 interface Booking {
@@ -123,10 +124,25 @@ export default function PortalPage() {
 
   const dr = s?.membership?.daysRemaining ?? null;
   const tone = dr === null ? 'slate' : dr <= 0 ? 'red' : dr <= 7 ? 'amber' : 'green';
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Hi {s?.member.fullName ?? 'there'} 👋</h1>
+
+      {s?.member.checkInToken && (
+        <Card className="flex items-center justify-between gap-4 bg-gradient-to-br from-brand to-brand-dark text-white">
+          <div>
+            <div className="text-xs font-medium uppercase tracking-wide opacity-80">Digital check-in card</div>
+            <div className="mt-1 text-lg font-bold">{s.member.fullName}</div>
+            <div className="font-mono text-sm opacity-90">{s.member.memberCode}</div>
+            <div className="mt-2 text-xs opacity-80">Scan this at the gym to check in.</div>
+          </div>
+          <div className="shrink-0 rounded-xl bg-white p-2">
+            <QRCodeSVG value={`${origin}/k/${s.member.checkInToken}`} size={96} />
+          </div>
+        </Card>
+      )}
 
       <div className="rounded-xl bg-gradient-to-br from-brand to-indigo-700 p-6 text-white shadow-sm">
         <h2 className="mb-2 text-sm font-semibold text-indigo-100">Your membership</h2>

@@ -3,6 +3,7 @@ import type { CreateLeadInput } from '@gymflow/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClassesService } from '../classes/classes.service';
 import { LeadsService } from '../leads/leads.service';
+import { AttendanceService } from '../attendance/attendance.service';
 import { addDays } from '../common/date';
 
 @Injectable()
@@ -11,7 +12,13 @@ export class PublicService {
     private readonly prisma: PrismaService,
     private readonly classes: ClassesService,
     private readonly leads: LeadsService,
+    private readonly attendance: AttendanceService,
   ) {}
+
+  /** Self check-in from a scanned QR (token identifies the member + gym). */
+  checkIn(token: string) {
+    return this.attendance.checkInByToken(token);
+  }
 
   async gymPage(slug: string) {
     const gym = await this.prisma.gym.findFirst({

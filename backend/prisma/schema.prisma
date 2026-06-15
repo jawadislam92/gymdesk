@@ -247,6 +247,7 @@ model Member {
   healthNotes       String?      @map("health_notes")
   assignedTrainerId String?      @map("assigned_trainer_id")
   status            MemberStatus @default(active)
+  checkInToken      String?      @unique @map("check_in_token")
   joinedAt          DateTime     @default(now()) @map("joined_at")
   createdAt         DateTime     @default(now()) @map("created_at")
   updatedAt         DateTime     @updatedAt @map("updated_at")

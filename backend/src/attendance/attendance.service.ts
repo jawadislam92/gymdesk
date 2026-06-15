@@ -43,6 +43,29 @@ export class AttendanceService {
     };
   }
 
+  /** Self check-in via a member's QR token (public, kiosk/phone-scanned). */
+  async checkInByToken(token: string) {
+    const member = await this.prisma.member.findFirst({
+      where: { checkInToken: token, deletedAt: null },
+      include: {
+        user: { select: { fullName: true } },
+        memberships: { where: { status: 'active' }, orderBy: { endDate: 'desc' }, take: 1 },
+      },
+    });
+    if (!member) throw new NotFoundException('Invalid check-in code');
+    const active = member.memberships[0];
+    const valid = Boolean(active && active.endDate > new Date());
+    await this.prisma.attendance.create({
+      data: { gymId: member.gymId, memberId: member.id, method: 'qr', recordedById: null },
+    });
+    return {
+      valid,
+      memberName: member.user?.fullName ?? null,
+      memberCode: member.memberCode,
+      membershipEndsAt: active?.endDate ?? null,
+    };
+  }
+
   list(gymId: string, dateStr?: string, memberId?: string) {
     const where: Prisma.AttendanceWhereInput = { gymId, ...(memberId ? { memberId } : {}) };
     if (dateStr) {

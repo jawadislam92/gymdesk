@@ -232,3 +232,10 @@
   (@nestjs/schedule) + manual "Run now". WhatsApp/SMS/email channels **config-gated** on provider
   env keys (like Stripe). Staff Automations page (run, channel status, outbox) + nav. Verified:
   renewal generated (1), dedup (2nd run=0), channels off without keys, page renders. Deployed live.
+- 2026-06-16 — **Compete-globally build #3: QR check-in + installable member app (PWA).**
+  Per-member `checkInToken` (backfilled); member portal shows a **digital QR card**; scanning it
+  opens public `/k/[token]` → records attendance (`method=qr`) + shows welcome/validity. App is now
+  **installable** (manifest + generated icon + service worker → Add to Home Screen, standalone).
+  NOTE: hand-authored the migration (`20260615190000_member_checkin_token`) because `migrate dev`
+  refuses non-interactive on a new unique constraint — apply with `migrate deploy`. Verified: token
+  check-in (valid/Alice/date), invalid→404, `/k` page in-browser, manifest/icon/sw served. Deployed.
