@@ -26,12 +26,15 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { WaiversModule } from './waivers/waivers.module';
 import { RenewalsModule } from './renewals/renewals.module';
 import { ExpensesModule } from './expenses/expenses.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { PosModule } from './pos/pos.module';
 import { BillingModule } from './billing/billing.module';
+import { AutomationsModule } from './automations/automations.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     RedisModule,
     AuthModule,
@@ -60,6 +63,7 @@ import { BillingModule } from './billing/billing.module';
     ExpensesModule,
     PosModule,
     BillingModule,
+    AutomationsModule,
   ],
 })
 export class AppModule {}

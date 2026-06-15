@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
 import {
   BarChart3,
+  BellRing,
   CalendarDays,
   Dumbbell,
   LayoutDashboard,
@@ -27,6 +28,7 @@ const NAV: { href: string; label: string; perm: string; icon: LucideIcon }[] = [
   { href: '/dashboard', label: 'Dashboard', perm: PERMISSIONS.DASHBOARD_VIEW, icon: LayoutDashboard },
   { href: '/members', label: 'Members', perm: PERMISSIONS.MEMBERS_MANAGE, icon: Users },
   { href: '/leads', label: 'Leads', perm: PERMISSIONS.MEMBERS_MANAGE, icon: UserPlus },
+  { href: '/automations', label: 'Automations', perm: PERMISSIONS.MEMBERS_MANAGE, icon: BellRing },
   { href: '/schedule', label: 'Schedule', perm: PERMISSIONS.CLASSES_BOOK, icon: CalendarDays },
   { href: '/check-in', label: 'Check-in', perm: PERMISSIONS.ATTENDANCE_RECORD, icon: ScanLine },
   { href: '/plans', label: 'Plans', perm: PERMISSIONS.PLANS_MANAGE, icon: Tag },

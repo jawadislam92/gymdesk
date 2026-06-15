@@ -226,3 +226,9 @@
   (note/call/whatsapp/email, auto-advance on first outreach) + convert-to-member (idempotent)
   + pipeline KPIs (conversion rate, follow-ups due, open value). New `lead_activities` table.
   Verified API (lead→member M0002, 100% conversion, re-convert 409) + in-browser board/panel.
+- 2026-06-15 — **Compete-globally build #2: Automated Reminders engine.** Retention autopilot —
+  renewal (membership expiring ≤7d) + win-back (no check-in 14d) + birthday reminders, delivered
+  in-app (targeted Notification → shows in member portal), dedup'd via data.dedupKey, daily `@Cron`
+  (@nestjs/schedule) + manual "Run now". WhatsApp/SMS/email channels **config-gated** on provider
+  env keys (like Stripe). Staff Automations page (run, channel status, outbox) + nav. Verified:
+  renewal generated (1), dedup (2nd run=0), channels off without keys, page renders. Deployed live.
