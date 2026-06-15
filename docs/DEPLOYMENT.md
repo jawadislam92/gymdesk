@@ -154,9 +154,13 @@ call when we get there.)*
       and **rebuild web**.
 - [ ] Neon "point-in-time restore" / backups confirmed on (free tier includes a
       retention window).
-- [ ] **Pre-launch security hardening** (tracked in `BUILD_TRACKER.md`): move the
-      web refresh-token from `localStorage` to an httpOnly cookie. Fine for local
-      testing; do before public traffic.
+- [x] **Server hardening** applied on the VPS (see §8) — swap, auto security
+      updates, fail2ban, daily DB backups, Nginx security headers + rate limits,
+      key-only SSH.
+- [ ] **App-level hardening** still recommended before heavy public traffic (see §8):
+      move the web refresh-token from `localStorage` to an httpOnly cookie, and run
+      the Node app as a non-root service user. Both are app/deploy changes best done
+      with local testing first.
 - [ ] **Online card payments**: add Stripe keys (see §5) — only needed when you
       want gyms to charge cards online vs. recording cash/manual payments.
 
@@ -236,5 +240,35 @@ ever commit to a paid tier.
 5. Add Stripe test keys (§5) → online payments.
 6. Custom domain + security hardening (§4) → public launch.
 
-_Last updated: 2026-06-15. Keep this in sync with `.env.example` and
+---
+
+## 8. Server hardening applied (on the VPS)
+
+Done directly on the box (2026-06-16), live site unaffected — verified end-to-end
+after each change. These are server-side, so they're **not** in the git repo; this is
+the record of what's in place.
+
+| Hardening | What it does |
+|-----------|--------------|
+| **2 GB swap** + `vm.swappiness=10` | Insures against out-of-memory kills during builds (box has 7.8 GB RAM, was 0 swap). |
+| **Unattended security upgrades** | OS security patches install automatically (`20auto-upgrades`). |
+| **fail2ban** (sshd jail, 5 tries / 10 min → 1 h ban) | Auto-bans IPs that brute-force SSH. |
+| **Daily Postgres backups** | `gymflow-backup.sh` → gzipped `pg_dump` to `/opt/backups/gymflow`, 03:15 daily, 7-day retention. |
+| **Nginx security headers** | HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` on every response. |
+| **Nginx rate limits** (per IP) | `/api/` 20 r/s (burst 50); public **AI** endpoints 2 r/s (burst 5) — protects the paid AI + blocks lead-spam. Rejections return 429. |
+| **Key-only SSH** | `PasswordAuthentication no`, root login `prohibit-password` (key only) — brute-force surface gone. |
+
+**Backups are local to the box** — good against app/DB mistakes, not against losing the
+whole VPS. Before serious production, copy the nightly dump off-box too (Hostinger
+snapshots, or scp to object storage). One line in `gymflow-backup.sh` away.
+
+**Still recommended (app/deploy-level, do with local testing):**
+- **httpOnly refresh-token cookie** — today the web keeps the refresh token in
+  `localStorage`; moving it to an httpOnly cookie means a cross-site-script can't read
+  it. Same-origin here (`gymrun.tech` serves web + `/api`), so it's a clean change.
+- **Non-root app user** — `pm2` runs as `root`; running the Node app as a low-privilege
+  service user contains the blast radius of any app vulnerability. Touches the deploy
+  runbook, so worth a careful pass.
+
+_Last updated: 2026-06-16. Keep this in sync with `.env.example` and
 `BUILD_TRACKER.md`._

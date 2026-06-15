@@ -262,3 +262,12 @@
   No schema change. Verified: dormant path (no key → widget hidden, chat returns graceful "offline");
   enabled path (fake key → status flips, request reaches Anthropic, 401 caught gracefully); full
   browser UX (open → greet → send → reply). Goes live once the owner adds an Anthropic key.
+- 2026-06-16 — **Pre-launch server hardening (VPS, task #37).** Applied directly on the box,
+  live site verified unaffected after each: 2 GB swap (was 0) + swappiness 10; unattended
+  security upgrades; **fail2ban** (sshd jail); **daily Postgres backups** (`gymflow-backup.sh`
+  → gzip pg_dump to `/opt/backups/gymflow`, 03:15 cron, 7-day retention, first dump verified);
+  **Nginx** security headers (HSTS/X-CTO/X-Frame/Referrer-Policy) + per-IP rate limits (`/api/`
+  20 r/s burst 50; public AI 2 r/s burst 5; 429 on reject); **key-only SSH** (`PasswordAuthentication
+  no`, root `prohibit-password`) — fresh key login re-verified so we're not locked out. Documented
+  in DEPLOYMENT.md §8. Still open (app/deploy-level, deferred for local testing): httpOnly
+  refresh-token cookie + non-root app user. Task #37 stays in progress until those two land.
