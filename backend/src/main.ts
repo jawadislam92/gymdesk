@@ -22,7 +22,12 @@ async function bootstrap(): Promise<void> {
   const corsOrigin = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
     : true;
-  app.enableCors({ origin: corsOrigin, credentials: true });
+  app.enableCors({
+    origin: corsOrigin,
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
 
   // OpenAPI / Swagger docs at /api/docs (outside the version prefix).
   const swaggerConfig = new DocumentBuilder()
