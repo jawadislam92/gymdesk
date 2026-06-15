@@ -70,13 +70,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <aside className="sticky top-0 flex h-screen w-64 flex-col justify-between border-r border-slate-200 bg-white">
+      <aside className="sticky top-0 flex h-screen w-64 flex-col justify-between border-r border-white/5 bg-ink text-slate-300">
         <div className="flex-1 overflow-y-auto p-4">
-          <div className="mb-6 flex items-center gap-2 px-2 py-1">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand font-bold text-white">G</div>
-            <span className="text-lg font-bold tracking-tight">GymFlow</span>
+          <div className="mb-7 flex items-center gap-2.5 px-2 py-1">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand font-display text-lg font-extrabold text-white shadow-sm shadow-brand/30">
+              G
+            </div>
+            <span className="font-display text-lg font-extrabold tracking-tight text-white">GymFlow</span>
           </div>
-          <nav className="space-y-0.5">
+          <nav className="space-y-1">
             {items.map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;
@@ -84,35 +86,43 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     active
-                      ? 'bg-brand text-white shadow-sm'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                      ? 'bg-brand text-white shadow-sm shadow-brand/30'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <Icon size={18} strokeWidth={2} />
+                  <Icon
+                    size={18}
+                    strokeWidth={2.2}
+                    className={active ? 'text-white' : 'text-slate-500 transition group-hover:text-white'}
+                  />
                   {item.label}
                 </Link>
               );
             })}
           </nav>
         </div>
-        <div className="border-t border-slate-100 p-3">
-          <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand/10 text-sm font-semibold text-brand">
+        <div className="border-t border-white/5 p-3">
+          <div className="flex items-center gap-3 rounded-xl px-2 py-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand/15 text-sm font-semibold text-brand">
               {initials(user.fullName)}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium text-slate-700">{user.fullName}</div>
-              <div className="truncate text-xs capitalize text-slate-400">{user.roles.join(', ').replace(/_/g, ' ')}</div>
+              <div className="truncate text-sm font-medium text-white">{user.fullName}</div>
+              <div className="truncate text-xs capitalize text-slate-500">{user.roles.join(', ').replace(/_/g, ' ')}</div>
             </div>
-            <button onClick={logout} title="Sign out" className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+            <button
+              onClick={logout}
+              title="Sign out"
+              className="rounded-lg p-2 text-slate-500 transition hover:bg-white/5 hover:text-white"
+            >
               <LogOut size={16} />
             </button>
           </div>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-6 sm:p-8">
         <div className="mx-auto max-w-6xl">{children}</div>
       </main>
     </div>
