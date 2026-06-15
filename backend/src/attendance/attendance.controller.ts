@@ -29,6 +29,11 @@ export class AttendanceController {
     return this.attendance.list(gymId, date, memberId);
   }
 
+  @Get('lookup')
+  lookup(@GymId() gymId: string, @Query('memberId') memberId: string) {
+    return this.attendance.lookup(gymId, memberId);
+  }
+
   @Get('summary')
   summary(@GymId() gymId: string) {
     return this.attendance.summary(gymId);

@@ -72,6 +72,58 @@ export class AttendanceService {
     };
   }
 
+  /**
+   * Look up a member's check-in eligibility WITHOUT recording attendance — powers
+   * the front-desk "doorkeeper" view so staff see membership + dues before letting
+   * someone in.
+   */
+  async lookup(gymId: string, memberId: string) {
+    const member = await this.prisma.member.findFirst({
+      where: { id: memberId, gymId, deletedAt: null },
+      include: {
+        user: { select: { fullName: true } },
+        memberships: {
+          where: { status: 'active' },
+          orderBy: { endDate: 'desc' },
+          take: 1,
+          include: { plan: { select: { name: true } } },
+        },
+      },
+    });
+    if (!member) throw new NotFoundException('Member not found');
+
+    const now = new Date();
+    const active = member.memberships[0];
+    const valid = Boolean(active && active.endDate > now);
+    const daysLeft = active
+      ? Math.ceil((active.endDate.getTime() - now.getTime()) / 86_400_000)
+      : null;
+
+    const duesAgg = await this.prisma.payment.aggregate({
+      where: { gymId, memberId, status: 'pending' },
+      _sum: { amount: true },
+    });
+    const dues = Number(duesAgg._sum.amount ?? 0);
+
+    const last = await this.prisma.attendance.findFirst({
+      where: { gymId, memberId },
+      orderBy: { checkedInAt: 'desc' },
+      select: { checkedInAt: true },
+    });
+
+    return {
+      member: {
+        id: member.id,
+        memberCode: member.memberCode,
+        fullName: member.user?.fullName ?? null,
+        status: member.status,
+      },
+      membership: active ? { planName: active.plan?.name ?? null, endDate: active.endDate, valid, daysLeft } : null,
+      dues,
+      lastCheckIn: last?.checkedInAt ?? null,
+    };
+  }
+
   list(gymId: string, dateStr?: string, memberId?: string) {
     const where: Prisma.AttendanceWhereInput = { gymId, ...(memberId ? { memberId } : {}) };
     if (dateStr) {
