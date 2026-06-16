@@ -167,8 +167,31 @@ model Gym {
   waiverAcceptances WaiverAcceptance[]
   products          Product[]
   sales             Sale[]
+  automations       Automation[]
 
   @@map("gyms")
+}
+
+/// A staff-defined automation rule: a trigger (membership expiring, member
+/// inactive, birthday, welcome) → a message, delivered on a channel, on/off.
+/// The retention engine runs every enabled rule daily; staff create their own.
+model Automation {
+  id         String   @id @default(uuid())
+  gymId      String   @map("gym_id")
+  name       String
+  trigger    String // membership_expiring | member_inactive | birthday | welcome
+  timingDays Int      @default(7) @map("timing_days")
+  channel    String   @default("in_app") // in_app | whatsapp | sms | email
+  title      String
+  template   String // message body, supports {firstName} {planName} {days} {gymName}
+  enabled    Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  gym Gym @relation(fields: [gymId], references: [id])
+
+  @@index([gymId, enabled])
+  @@map("automations")
 }
 
 model User {

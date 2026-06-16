@@ -17,3 +17,4 @@ export * from './notification';
 export * from './waiver';
 export * from './expense';
 export * from './product';
+export * from './automation';
