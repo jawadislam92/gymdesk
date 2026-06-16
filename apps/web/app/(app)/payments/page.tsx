@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
-import { Badge, Button, Card, Input, Select } from '@/components/ui';
+import { Badge, Button, Card, Input, PageHeader, Select } from '@/components/ui';
 import { dateStamp, downloadCsv } from '@/lib/csv';
 import { printReceipt } from '@/lib/receipt';
 
@@ -153,15 +153,28 @@ export default function PaymentsPage() {
 
   const payments = paymentsQuery.data?.data ?? [];
   const members = membersQuery.data?.data ?? [];
+  const duePayments = payments.filter((p) => p.status === 'pending');
+  const dueTotal = duePayments.reduce((s, p) => s + Number(p.amount), 0);
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Payments</h1>
+      <PageHeader
+        title="Payments"
+        description="Record and track every payment — memberships, dues, and shop sales. Collect outstanding balances and print receipts."
+      >
         <Button variant="ghost" onClick={exportCsv} disabled={exporting}>
           {exporting ? 'Exporting…' : 'Export CSV'}
         </Button>
-      </div>
+      </PageHeader>
+
+      {dueTotal > 0 && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-amber-50 px-4 py-3 text-amber-800">
+          <span className="text-sm font-medium">
+            {duePayments.length} payment{duePayments.length === 1 ? '' : 's'} due · ${dueTotal.toLocaleString()} outstanding
+          </span>
+          <span className="text-xs text-amber-600">Use “Collect” on a pending row to mark it paid.</span>
+        </div>
+      )}
 
       <Card className="mb-6">
         <h2 className="mb-4 font-semibold">Record a payment</h2>
