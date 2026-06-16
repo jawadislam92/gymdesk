@@ -89,12 +89,12 @@ Navigation is the dark sidebar on the left.
 ### 💸 Expenses
 - **Where:** sidebar → Expenses.
 - **What:** record gym running costs (rent, utilities, equipment, salaries, etc.) so you see real profit.
-- **How:** add an expense (category, amount, date, note); the profit picture flows into Reports.
+- **How:** **Add expense** popup (category, amount, date, note). Summary cards show **this month**, **all-time total**, and a **by-category** breakdown; the table totals at the bottom.
 
 ### 🏋️ Trainers
 - **Where:** sidebar → Trainers.
 - **What:** your coaching team and who they train.
-- **How:** view each trainer, their specialisation, and assigned members. *(A richer add/edit-trainer flow is being added in the current polish pass.)*
+- **How:** **Add trainer** / **Edit** (name, specialisation, email, phone, hourly rate, bio, active) / archive. Click a trainer to expand their **assigned members**. (Assign a member to a trainer from the member's intake/edit popup.)
 
 ### 📊 Reports
 - **Where:** sidebar → Reports.
