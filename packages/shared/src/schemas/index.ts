@@ -18,3 +18,4 @@ export * from './waiver';
 export * from './expense';
 export * from './product';
 export * from './automation';
+export * from './trainer';
