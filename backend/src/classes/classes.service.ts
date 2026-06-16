@@ -143,6 +143,7 @@ export class ClassesService {
       capacity: row.capacity,
       location: row.location,
       isCancelled: row.isCancelled,
+      trainerId: row.trainerId,
       trainerName: row.trainer?.user?.fullName ?? null,
       bookedCount: row._count.bookings,
     };
