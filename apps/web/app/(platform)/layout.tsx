@@ -15,7 +15,7 @@ export default function PlatformLayout({ children }: { children: ReactNode }) {
   }, [loading, user, isPlatformAdmin, router]);
 
   if (loading || !user || !isPlatformAdmin) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-400">Loading…</div>;
+    return <div className="flex min-h-screen items-center justify-center text-slate-500">Loading…</div>;
   }
 
   return (

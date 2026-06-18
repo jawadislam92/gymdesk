@@ -239,7 +239,7 @@ export default function MemberDetailPage() {
               </div>
             </div>
           ) : (
-            <p className="text-sm text-slate-400">No membership yet — sell a plan from the Members list.</p>
+            <p className="text-sm text-slate-500">No membership yet — sell a plan from the Members list.</p>
           )}
         </Card>
       </div>
@@ -319,7 +319,7 @@ export default function MemberDetailPage() {
               </form>
             </div>
           ))}
-          {(workoutsQ.data ?? []).length === 0 && <p className="text-sm text-slate-400">No workout plans yet.</p>}
+          {(workoutsQ.data ?? []).length === 0 && <p className="text-sm text-slate-500">No workout plans yet.</p>}
         </div>
 
         <h3 className="mb-2 mt-5 text-sm font-semibold text-slate-600">Progress</h3>
@@ -421,7 +421,7 @@ export default function MemberDetailPage() {
               )}
             </div>
           ))}
-          {(dietQ.data ?? []).length === 0 && <p className="text-sm text-slate-400">No diet plans yet.</p>}
+          {(dietQ.data ?? []).length === 0 && <p className="text-sm text-slate-500">No diet plans yet.</p>}
         </div>
       </Card>
 
@@ -456,7 +456,7 @@ export default function MemberDetailPage() {
               <span className="font-medium">${p.amount}</span>
             </li>
           ))}
-          {payments.length === 0 && <li className="py-2 text-slate-400">No payments yet.</li>}
+          {payments.length === 0 && <li className="py-2 text-slate-500">No payments yet.</li>}
         </ul>
       </Card>
 
@@ -468,7 +468,7 @@ export default function MemberDetailPage() {
               {new Date(a.checkedInAt).toLocaleString()}
             </li>
           ))}
-          {attendance.length === 0 && <li className="py-2 text-slate-400">No check-ins yet.</li>}
+          {attendance.length === 0 && <li className="py-2 text-slate-500">No check-ins yet.</li>}
         </ul>
       </Card>
     </div>

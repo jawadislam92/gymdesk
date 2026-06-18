@@ -15,7 +15,7 @@ export default function MemberLayout({ children }: { children: ReactNode }) {
   }, [loading, user, isMemberOnly, router]);
 
   if (loading || !user || !isMemberOnly) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-400">Loading…</div>;
+    return <div className="flex min-h-screen items-center justify-center text-slate-500">Loading…</div>;
   }
 
   return (

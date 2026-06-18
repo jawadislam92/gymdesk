@@ -155,14 +155,14 @@ export default function PortalPage() {
         <Card>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Loyalty points</div>
+              <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Loyalty points</div>
               <div className="text-3xl font-bold text-brand">{loyaltyQ.data.balance.toLocaleString()}</div>
             </div>
             {loyaltyQ.data.referralCode && (
               <div className="text-right">
-                <div className="text-xs text-slate-400">Your referral code</div>
+                <div className="text-xs text-slate-500">Your referral code</div>
                 <div className="font-mono text-lg font-bold tracking-wider">{loyaltyQ.data.referralCode}</div>
-                <div className="text-xs text-slate-400">Earn 100 pts per friend who joins! 🎁</div>
+                <div className="text-xs text-slate-500">Earn 100 pts per friend who joins! 🎁</div>
               </div>
             )}
           </div>
@@ -221,7 +221,7 @@ export default function PortalPage() {
               <li key={n.id} className="py-2">
                 <div className="font-medium">{n.title}</div>
                 {n.body && <div className="text-slate-500">{n.body}</div>}
-                <div className="text-xs text-slate-400">{new Date(n.createdAt).toLocaleDateString()}</div>
+                <div className="text-xs text-slate-500">{new Date(n.createdAt).toLocaleDateString()}</div>
               </li>
             ))}
           </ul>
@@ -245,7 +245,7 @@ export default function PortalPage() {
               </Button>
             </li>
           ))}
-          {bookings.length === 0 && <li className="py-3 text-sm text-slate-400">You haven&apos;t booked any classes yet.</li>}
+          {bookings.length === 0 && <li className="py-3 text-sm text-slate-500">You haven&apos;t booked any classes yet.</li>}
         </ul>
       </Card>
 
@@ -269,7 +269,7 @@ export default function PortalPage() {
               </li>
             );
           })}
-          {available.length === 0 && <li className="py-3 text-sm text-slate-400">No classes available to book right now.</li>}
+          {available.length === 0 && <li className="py-3 text-sm text-slate-500">No classes available to book right now.</li>}
         </ul>
       </Card>
 
@@ -288,11 +288,11 @@ export default function PortalPage() {
                   </span>
                 </li>
               ))}
-              {workoutsQ.data[0].exercises.length === 0 && <li className="py-2 text-slate-400">No exercises yet.</li>}
+              {workoutsQ.data[0].exercises.length === 0 && <li className="py-2 text-slate-500">No exercises yet.</li>}
             </ul>
           </div>
         ) : (
-          <p className="text-sm text-slate-400">No workout assigned yet — ask your trainer.</p>
+          <p className="text-sm text-slate-500">No workout assigned yet — ask your trainer.</p>
         )}
       </Card>
 
@@ -327,7 +327,7 @@ export default function PortalPage() {
               </span>
             </li>
           ))}
-          {(progressQ.data ?? []).length === 0 && <li className="py-2 text-slate-400">No entries yet.</li>}
+          {(progressQ.data ?? []).length === 0 && <li className="py-2 text-slate-500">No entries yet.</li>}
         </ul>
       </Card>
 
@@ -354,7 +354,7 @@ export default function PortalPage() {
             )}
           </div>
         ) : (
-          <p className="text-sm text-slate-400">No diet plan assigned yet.</p>
+          <p className="text-sm text-slate-500">No diet plan assigned yet.</p>
         )}
       </Card>
 
@@ -363,13 +363,13 @@ export default function PortalPage() {
         <ul className="divide-y divide-slate-100 text-sm">
           {payments.map((p) => (
             <li key={p.id} className="flex justify-between py-2">
-              <span className="font-mono text-xs text-slate-400">{p.invoiceNumber}</span>
+              <span className="font-mono text-xs text-slate-500">{p.invoiceNumber}</span>
               <span className="capitalize text-slate-500">{p.method}</span>
               <span>{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : '—'}</span>
               <span className="font-medium">${p.amount}</span>
             </li>
           ))}
-          {payments.length === 0 && <li className="py-2 text-slate-400">No payments yet.</li>}
+          {payments.length === 0 && <li className="py-2 text-slate-500">No payments yet.</li>}
         </ul>
       </Card>
     </div>

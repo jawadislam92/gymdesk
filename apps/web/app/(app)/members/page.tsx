@@ -231,7 +231,7 @@ export default function MembersPage() {
             </button>
           ))}
         </div>
-        <div className="text-sm text-slate-400 sm:ml-auto">
+        <div className="text-sm text-slate-500 sm:ml-auto">
           {total} member{total === 1 ? '' : 's'}
         </div>
       </div>
@@ -254,7 +254,7 @@ export default function MembersPage() {
                   <Link href={`/members/${m.id}`} className="font-semibold text-slate-800 hover:text-brand">
                     {m.fullName}
                   </Link>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-500">
                     <span className="font-mono">{m.memberCode}</span>
                     {m.email ? ` · ${m.email}` : ''}
                   </div>
@@ -297,7 +297,7 @@ export default function MembersPage() {
                         <button
                           onClick={() => openEdit(m)}
                           aria-label="Edit member"
-                          className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-brand"
+                          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-brand"
                         >
                           <Pencil size={16} />
                         </button>
@@ -308,7 +308,7 @@ export default function MembersPage() {
                             }
                           }}
                           aria-label="Remove member"
-                          className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -320,7 +320,7 @@ export default function MembersPage() {
             ))}
             {members.length === 0 && !membersQuery.isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
                   No members{statusFilter !== 'all' ? ` with status “${statusFilter}”` : ''}{search ? ' match your search' : ' yet'}. Add your first one to get started.
                 </td>
               </tr>
@@ -359,7 +359,7 @@ export default function MembersPage() {
       >
         <form id="member-form" onSubmit={onSubmit} className="space-y-5">
           <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Personal</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Personal</h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input label="Full name" name="fullName" required defaultValue={editing?.fullName ?? ''} />
               <Select label="Gender" name="gender" defaultValue={editing?.gender ?? ''}>
@@ -380,7 +380,7 @@ export default function MembersPage() {
           </div>
 
           <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
               Emergency &amp; health
             </h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

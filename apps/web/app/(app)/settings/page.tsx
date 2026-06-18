@@ -227,18 +227,18 @@ export default function SettingsPage() {
             <li key={a.id} className="py-2">
               <div className="font-medium">{a.title}</div>
               {a.body && <div className="text-slate-500">{a.body}</div>}
-              <div className="text-xs text-slate-400">{new Date(a.createdAt).toLocaleDateString()}</div>
+              <div className="text-xs text-slate-500">{new Date(a.createdAt).toLocaleDateString()}</div>
             </li>
           ))}
           {(announcementsQ.data ?? []).length === 0 && (
-            <li className="py-2 text-slate-400">No announcements yet.</li>
+            <li className="py-2 text-slate-500">No announcements yet.</li>
           )}
         </ul>
       </Card>
 
       <Card>
         <h2 className="mb-1 font-semibold">Membership agreement / waiver</h2>
-        <p className="mb-4 text-xs text-slate-400">
+        <p className="mb-4 text-xs text-slate-500">
           {waiverQ.data
             ? `Version ${waiverQ.data.version} · accepted by ${waiverQ.data.acceptedCount} member(s)`
             : 'No agreement published yet.'}

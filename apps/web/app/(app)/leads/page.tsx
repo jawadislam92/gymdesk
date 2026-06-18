@@ -162,7 +162,7 @@ export default function LeadsPage() {
                   </span>
                 </div>
                 {stat && stat.value > 0 && (
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-500">
                     {currency} {stat.value.toLocaleString()}
                   </div>
                 )}
@@ -300,29 +300,29 @@ function LeadPanel({
               </Badge>
             )}
           </div>
-          <button onClick={onClose} aria-label="Close" className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+          <button onClick={onClose} aria-label="Close" className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700">
             <X size={18} />
           </button>
         </div>
 
         {!lead ? (
-          <div className="p-6 text-sm text-slate-400">Loading…</div>
+          <div className="p-6 text-sm text-slate-500">Loading…</div>
         ) : (
           <div className="space-y-5 p-5">
             {/* Contact */}
             <div className="space-y-2 text-sm">
               {lead.phone && (
                 <div className="flex items-center gap-2 text-slate-600">
-                  <Phone size={15} className="text-slate-400" /> {lead.phone}
+                  <Phone size={15} className="text-slate-500" /> {lead.phone}
                 </div>
               )}
               {lead.email && (
                 <div className="flex items-center gap-2 text-slate-600">
-                  <Mail size={15} className="text-slate-400" /> {lead.email}
+                  <Mail size={15} className="text-slate-500" /> {lead.email}
                 </div>
               )}
               {lead.source && (
-                <div className="text-xs text-slate-400">
+                <div className="text-xs text-slate-500">
                   Source: <span className="font-medium text-slate-500">{lead.source}</span>
                 </div>
               )}
@@ -402,7 +402,7 @@ function LeadPanel({
 
             {/* Timeline */}
             <div>
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Activity</h3>
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Activity</h3>
               <ul className="space-y-3">
                 {lead.activities.map((a) => {
                   const Icon = ACTIVITY_ICON[a.type] ?? StickyNote;
@@ -413,7 +413,7 @@ function LeadPanel({
                       </div>
                       <div>
                         <div className="text-slate-700">{a.body ?? a.type}</div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs text-slate-500">
                           {a.type !== 'note' && <span className="capitalize">{a.type.replace('_', ' ')} · </span>}
                           {new Date(a.createdAt).toLocaleString()}
                         </div>
@@ -421,7 +421,7 @@ function LeadPanel({
                     </li>
                   );
                 })}
-                {lead.activities.length === 0 && <li className="text-xs text-slate-400">No activity yet.</li>}
+                {lead.activities.length === 0 && <li className="text-xs text-slate-500">No activity yet.</li>}
               </ul>
             </div>
           </div>

@@ -27,7 +27,7 @@ export default function LandingPage() {
     <div className="bg-white text-slate-900">
       {/* Nav */}
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <div className="text-xl font-bold text-brand">GymFlow<span className="text-slate-400"> Suite</span></div>
+        <div className="text-xl font-bold text-brand">GymFlow<span className="text-slate-500"> Suite</span></div>
         <nav className="flex items-center gap-6 text-sm">
           <a href="#features" className="hidden text-slate-600 hover:text-slate-900 sm:block">Features</a>
           <a href="#pricing" className="hidden text-slate-600 hover:text-slate-900 sm:block">Pricing</a>
@@ -58,7 +58,7 @@ export default function LandingPage() {
               See features
             </a>
           </div>
-          <p className="mt-4 text-xs text-slate-400">14-day free trial · no card required</p>
+          <p className="mt-4 text-xs text-slate-500">14-day free trial · no card required</p>
         </div>
       </section>
 
@@ -97,7 +97,7 @@ export default function LandingPage() {
                 <h3 className="text-lg font-semibold">{p.name}</h3>
                 <div className="mt-2 text-4xl font-extrabold">
                   {p.price}
-                  {p.price !== 'Custom' && <span className="text-base font-medium text-slate-400">/mo</span>}
+                  {p.price !== 'Custom' && <span className="text-base font-medium text-slate-500">/mo</span>}
                 </div>
                 <p className="mt-1 text-sm text-slate-500">{p.tag}</p>
                 <ul className="mt-6 space-y-2 text-sm text-slate-600">
@@ -130,7 +130,7 @@ export default function LandingPage() {
         </Link>
       </section>
 
-      <footer className="mx-auto max-w-6xl px-6 py-10 text-center text-sm text-slate-400">
+      <footer className="mx-auto max-w-6xl px-6 py-10 text-center text-sm text-slate-500">
         © {new Date().getFullYear()} GymFlow Suite — by Sparking Asia.
       </footer>
     </div>

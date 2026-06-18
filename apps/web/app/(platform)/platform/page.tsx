@@ -186,7 +186,7 @@ export default function PlatformPage() {
             ))}
             {gyms.length === 0 && !gymsQ.isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
                   No gyms yet.
                 </td>
               </tr>

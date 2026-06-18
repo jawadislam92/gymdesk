@@ -72,19 +72,19 @@ export default function ReportsPage() {
             Download CSV
           </Button>
         </div>
-        <p className="mb-3 text-xs text-slate-400">Collected payments per month · last 6 months</p>
+        <p className="mb-3 text-xs text-slate-500">Collected payments per month · last 6 months</p>
         <LineChart data={revenue.data ?? []} money symbol={sym} />
       </Card>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <h2 className="mb-1 font-bold text-slate-900">New members</h2>
-          <p className="mb-3 text-xs text-slate-400">Joined per month · last 6 months</p>
+          <p className="mb-3 text-xs text-slate-500">Joined per month · last 6 months</p>
           <BarChart data={growth.data ?? []} />
         </Card>
         <Card>
           <h2 className="mb-1 font-bold text-slate-900">Check-ins</h2>
-          <p className="mb-3 text-xs text-slate-400">Daily attendance · last 14 days</p>
+          <p className="mb-3 text-xs text-slate-500">Daily attendance · last 14 days</p>
           <LineChart data={attendance.data ?? []} />
         </Card>
       </div>
@@ -100,7 +100,7 @@ export default function ReportsPage() {
             Download CSV
           </Button>
         </div>
-        <p className="mb-3 text-xs text-slate-400">Recorded costs per month · last 6 months</p>
+        <p className="mb-3 text-xs text-slate-500">Recorded costs per month · last 6 months</p>
         <BarChart data={expenses.data ?? []} money symbol={sym} />
       </Card>
     </div>

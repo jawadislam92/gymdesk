@@ -134,7 +134,7 @@ export default function PlansPage() {
                 <span className="text-3xl font-bold tracking-tight text-slate-900">
                   {money(Number(p.price), p.currency)}
                 </span>
-                <span className="text-sm text-slate-400">/ {p.durationDays} days</span>
+                <span className="text-sm text-slate-500">/ {p.durationDays} days</span>
               </div>
               <div className="mt-1 text-sm font-semibold text-brand">
                 {p.classCredits == null ? 'Unlimited classes' : `${p.classCredits} class credits`}
@@ -164,7 +164,7 @@ export default function PlansPage() {
                         archive.mutate(p.id);
                       }
                     }}
-                    className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                   >
                     Archive
                   </button>
@@ -175,7 +175,7 @@ export default function PlansPage() {
         })}
         {plans.length === 0 && !plansQuery.isLoading && (
           <Card className="sm:col-span-2 lg:col-span-3">
-            <p className="py-6 text-center text-slate-400">
+            <p className="py-6 text-center text-slate-500">
               No plans yet. Add your first membership plan to start selling.
             </p>
           </Card>

@@ -34,10 +34,10 @@ const KPIS: {
   sub: string;
   money?: boolean;
 }[] = [
-  { key: 'activeMembers', label: 'Active members', icon: Users, tint: 'bg-orange-100 text-brand', sub: 'currently training with you' },
-  { key: 'revenueThisMonth', label: 'Revenue this month', icon: DollarSign, tint: 'bg-green-100 text-green-600', sub: 'collected so far', money: true },
-  { key: 'todayCheckIns', label: "Today's check-ins", icon: ScanLine, tint: 'bg-blue-100 text-blue-600', sub: 'visits logged today' },
-  { key: 'expiringSoon', label: 'Expiring in 7 days', icon: Clock, tint: 'bg-amber-100 text-amber-600', sub: 'memberships to renew' },
+  { key: 'activeMembers', label: 'Active members', icon: Users, tint: 'bg-orange-100 text-orange-700', sub: 'currently training with you' },
+  { key: 'revenueThisMonth', label: 'Revenue this month', icon: DollarSign, tint: 'bg-green-100 text-green-700', sub: 'collected so far', money: true },
+  { key: 'todayCheckIns', label: "Today's check-ins", icon: ScanLine, tint: 'bg-blue-100 text-blue-700', sub: 'visits logged today' },
+  { key: 'expiringSoon', label: 'Expiring in 7 days', icon: Clock, tint: 'bg-amber-100 text-amber-700', sub: 'memberships to renew' },
   { key: 'totalMembers', label: 'Total members', icon: UserCheck, tint: 'bg-slate-100 text-slate-600', sub: 'on the books, all-time' },
 ];
 
@@ -89,7 +89,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <div className="text-3xl font-bold tracking-tight text-slate-900">{isLoading ? '…' : value}</div>
-                <div className="mt-1 text-xs text-slate-400">{kpi.sub}</div>
+                <div className="mt-1 text-xs text-slate-500">{kpi.sub}</div>
               </div>
             </Card>
           );
@@ -99,13 +99,13 @@ export default function DashboardPage() {
       <Card className="mt-8">
         <div className="mb-1 flex items-center justify-between">
           <h2 className="font-bold text-slate-900">Revenue</h2>
-          <span className="text-xs text-slate-400">last 6 months</span>
+          <span className="text-xs text-slate-500">last 6 months</span>
         </div>
         <LineChart data={revenueQ.data ?? []} money symbol={sym} height={180} />
       </Card>
 
       <div className="mt-8">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Quick actions</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Quick actions</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {QUICK.map((q) => {
             const Icon = q.icon;

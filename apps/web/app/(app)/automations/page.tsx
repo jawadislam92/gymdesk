@@ -191,7 +191,7 @@ export default function AutomationsPage() {
                   if (confirm(`Delete “${a.name}”?`)) remove.mutate(a.id);
                 }}
                 aria-label="Delete automation"
-                className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
               >
                 <Trash2 size={16} />
               </button>
@@ -200,22 +200,22 @@ export default function AutomationsPage() {
         ))}
         {rules.length === 0 && !rulesQ.isLoading && (
           <Card className="lg:col-span-2">
-            <p className="py-6 text-center text-slate-400">No automations yet — create your first rule.</p>
+            <p className="py-6 text-center text-slate-500">No automations yet — create your first rule.</p>
           </Card>
         )}
       </div>
 
       {/* Channel status */}
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Delivery channels</h2>
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Delivery channels</h2>
       <div className="mb-2 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {channels.map((c) => (
           <Card key={c.key} className="flex items-center justify-between">
             <div>
               <div className="text-sm font-medium text-slate-700">{c.label}</div>
-              <div className="text-xs text-slate-400">{c.on ? 'Active' : 'Add keys to enable'}</div>
+              <div className="text-xs text-slate-500">{c.on ? 'Active' : 'Add keys to enable'}</div>
             </div>
             <span
-              className={`flex h-8 w-8 items-center justify-center rounded-full ${c.on ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400'}`}
+              className={`flex h-8 w-8 items-center justify-center rounded-full ${c.on ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-500'}`}
             >
               {c.on ? <Check size={16} /> : <X size={16} />}
             </span>
@@ -223,7 +223,7 @@ export default function AutomationsPage() {
         ))}
       </div>
       {ch && !ch.whatsapp && (
-        <p className="mb-8 text-xs text-slate-400">
+        <p className="mb-8 text-xs text-slate-500">
           WhatsApp / SMS / email activate automatically once you add provider keys (like Stripe). Until then every
           message is delivered <strong>in-app</strong> and logged below.
         </p>
@@ -253,13 +253,13 @@ export default function AutomationsPage() {
                   <Badge tone={kindTone[r.data?.kind ?? ''] ?? 'slate'}>{r.data?.kind ?? r.type}</Badge>
                 </td>
                 <td className="px-4 py-3 text-slate-600">{r.title}</td>
-                <td className="px-4 py-3 text-xs uppercase text-slate-400">{r.channel.replace('_', ' ')}</td>
+                <td className="px-4 py-3 text-xs uppercase text-slate-500">{r.channel.replace('_', ' ')}</td>
                 <td className="px-4 py-3 text-slate-500">{new Date(r.createdAt).toLocaleString()}</td>
               </tr>
             ))}
             {log.length === 0 && !logQ.isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
                   No messages yet. Click “Run now” to fire today’s automations.
                 </td>
               </tr>
@@ -337,7 +337,7 @@ export default function AutomationsPage() {
             placeholder="Hi {firstName}, your {planName} membership ends in {days} days…"
             defaultValue={editing?.template ?? ''}
           />
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Variables you can use:{' '}
             <code className="rounded bg-slate-100 px-1">{'{firstName}'}</code>{' '}
             <code className="rounded bg-slate-100 px-1">{'{planName}'}</code>{' '}

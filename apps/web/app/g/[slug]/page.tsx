@@ -48,7 +48,7 @@ export default function PublicGymPage() {
     } as Record<string, string>);
   }
 
-  if (pageQ.isLoading) return <div className="p-10 text-center text-slate-400">Loading…</div>;
+  if (pageQ.isLoading) return <div className="p-10 text-center text-slate-500">Loading…</div>;
   if (pageQ.error) return <div className="p-10 text-center text-slate-500">Gym not found.</div>;
   const data = pageQ.data!;
 
@@ -79,7 +79,7 @@ export default function PublicGymPage() {
                 <div className="text-2xl font-bold">${p.price}</div>
               </Card>
             ))}
-            {data.plans.length === 0 && <p className="text-sm text-slate-400">Contact us for pricing.</p>}
+            {data.plans.length === 0 && <p className="text-sm text-slate-500">Contact us for pricing.</p>}
           </div>
         </div>
 
@@ -96,12 +96,12 @@ export default function PublicGymPage() {
                       {c.trainerName ? ` · ${c.trainerName}` : ''}
                     </div>
                   </div>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500">
                     {c.capacity ? `${c.bookedCount}/${c.capacity}` : 'open'}
                   </span>
                 </li>
               ))}
-              {data.classes.length === 0 && <li className="px-4 py-3 text-sm text-slate-400">Schedule coming soon.</li>}
+              {data.classes.length === 0 && <li className="px-4 py-3 text-sm text-slate-500">Schedule coming soon.</li>}
             </ul>
           </Card>
         </div>
@@ -132,7 +132,7 @@ export default function PublicGymPage() {
         </div>
       </section>
 
-      <footer className="py-8 text-center text-xs text-slate-400">Powered by GymFlow Suite</footer>
+      <footer className="py-8 text-center text-xs text-slate-500">Powered by GymFlow Suite</footer>
 
       <AiChat slug={slug} gymName={data.gym.name} />
     </div>

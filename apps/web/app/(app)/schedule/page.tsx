@@ -206,7 +206,7 @@ export default function SchedulePage() {
                   const full = c.capacity > 0 && c.bookedCount >= c.capacity;
                   return (
                     <Card key={c.id} className={`p-3 ${c.isCancelled ? 'opacity-50' : ''}`}>
-                      <div className="text-xs font-medium text-slate-400">
+                      <div className="text-xs font-medium text-slate-500">
                         {fmtTime(c.startsAt)}–{fmtTime(c.endsAt)}
                       </div>
                       <div className="font-semibold text-slate-800">{c.title}</div>
@@ -221,7 +221,7 @@ export default function SchedulePage() {
                               onClick={() => openBook(c)}
                               disabled={full}
                               aria-label="Book member"
-                              className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand disabled:opacity-40"
+                              className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-brand disabled:opacity-40"
                             >
                               <UserPlus size={15} />
                             </button>
@@ -230,7 +230,7 @@ export default function SchedulePage() {
                                 <button
                                   onClick={() => openEdit(c)}
                                   aria-label="Edit class"
-                                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand"
+                                  className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-brand"
                                 >
                                   <Pencil size={15} />
                                 </button>
@@ -239,7 +239,7 @@ export default function SchedulePage() {
                                     if (confirm(`Cancel “${c.title}”?`)) cancelClass.mutate(c.id);
                                   }}
                                   aria-label="Cancel class"
-                                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                                  className="rounded-lg p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                                 >
                                   <X size={15} />
                                 </button>

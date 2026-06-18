@@ -110,13 +110,13 @@ export default function CheckInPage() {
         <Card>
           {!selectedId && (
             <div className="relative">
-              <Search size={18} className="pointer-events-none absolute left-3 top-3 text-slate-400" />
+              <Search size={18} className="pointer-events-none absolute left-3 top-3 text-slate-500" />
               <input
                 autoFocus
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search member by name, code or phone…"
-                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-brand focus:ring-2 focus:ring-brand/25"
+                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm outline-none transition placeholder:text-slate-500 focus:border-brand focus:ring-2 focus:ring-brand/25"
               />
             </div>
           )}
@@ -138,7 +138,7 @@ export default function CheckInPage() {
                   </span>
                   <span className="flex-1">
                     <span className="block text-sm font-semibold text-slate-800">{m.fullName}</span>
-                    <span className="block font-mono text-xs text-slate-400">{m.memberCode}</span>
+                    <span className="block font-mono text-xs text-slate-500">{m.memberCode}</span>
                   </span>
                   <Badge tone={m.status === 'active' ? 'green' : m.status === 'expired' ? 'red' : 'slate'}>
                     {m.status}
@@ -146,13 +146,13 @@ export default function CheckInPage() {
                 </button>
               ))}
               {hits.length === 0 && !searchQuery.isLoading && (
-                <p className="py-6 text-center text-sm text-slate-400">No members match “{search}”.</p>
+                <p className="py-6 text-center text-sm text-slate-500">No members match “{search}”.</p>
               )}
             </div>
           )}
 
           {!selectedId && search.trim().length === 0 && (
-            <p className="mt-6 text-center text-sm text-slate-400">
+            <p className="mt-6 text-center text-sm text-slate-500">
               Start typing a member’s name or code to check them in.
             </p>
           )}
@@ -161,7 +161,7 @@ export default function CheckInPage() {
           {selectedId && (
             <div>
               {lookupQuery.isLoading || !look ? (
-                <p className="py-8 text-center text-sm text-slate-400">Loading…</p>
+                <p className="py-8 text-center text-sm text-slate-500">Loading…</p>
               ) : (
                 <div>
                   <div className="flex items-start justify-between">
@@ -171,10 +171,10 @@ export default function CheckInPage() {
                       </span>
                       <div>
                         <div className="text-lg font-bold text-slate-900">{look.member.fullName}</div>
-                        <div className="font-mono text-xs text-slate-400">{look.member.memberCode}</div>
+                        <div className="font-mono text-xs text-slate-500">{look.member.memberCode}</div>
                       </div>
                     </div>
-                    <button onClick={reset} aria-label="Search again" className="rounded-lg p-2 text-slate-400 hover:bg-slate-100">
+                    <button onClick={reset} aria-label="Search again" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100">
                       <X size={18} />
                     </button>
                   </div>
@@ -215,7 +215,7 @@ export default function CheckInPage() {
                     </div>
                   )}
 
-                  <div className="mt-3 text-xs text-slate-400">
+                  <div className="mt-3 text-xs text-slate-500">
                     {look.lastCheckIn
                       ? `Last visit: ${new Date(look.lastCheckIn).toLocaleString([], {
                           month: 'short',
@@ -247,7 +247,7 @@ export default function CheckInPage() {
 
         {/* Today's check-ins */}
         <div>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
             Today · {rows.length} in
           </h2>
           <Card className="max-h-[28rem] overflow-y-auto p-0">
@@ -260,12 +260,12 @@ export default function CheckInPage() {
                   <span className="flex-1 truncate text-sm font-medium text-slate-700">
                     {a.member?.user?.fullName ?? a.member?.memberCode}
                   </span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500">
                     {new Date(a.checkedInAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </li>
               ))}
-              {rows.length === 0 && <li className="px-4 py-10 text-center text-sm text-slate-400">No check-ins yet today.</li>}
+              {rows.length === 0 && <li className="px-4 py-10 text-center text-sm text-slate-500">No check-ins yet today.</li>}
             </ul>
           </Card>
         </div>

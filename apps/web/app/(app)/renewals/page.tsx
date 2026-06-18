@@ -102,7 +102,7 @@ export default function RenewalsPage() {
                     <Link href={`/members/${r.memberId}`} className="font-semibold text-slate-800 hover:text-brand">
                       {r.memberName ?? r.memberCode}
                     </Link>
-                    {r.memberCode && <div className="font-mono text-xs text-slate-400">{r.memberCode}</div>}
+                    {r.memberCode && <div className="font-mono text-xs text-slate-500">{r.memberCode}</div>}
                   </td>
                   <td className="px-4 py-3 text-slate-500">{r.plan}</td>
                   <td className="px-4 py-3 text-slate-500">{new Date(r.endDate).toLocaleDateString()}</td>
@@ -130,7 +130,7 @@ export default function RenewalsPage() {
             })}
             {rows.length === 0 && !q.isLoading && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-10 text-center text-slate-500">
                   No memberships expiring in this window. 🎉
                 </td>
               </tr>

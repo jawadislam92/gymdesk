@@ -93,7 +93,7 @@ export default function ExpensesPage() {
         <Card>
           <div className="mb-2 text-sm font-medium text-slate-500">By category</div>
           {byCategory.length === 0 ? (
-            <div className="text-sm text-slate-400">No expenses yet</div>
+            <div className="text-sm text-slate-500">No expenses yet</div>
           ) : (
             <div className="flex flex-wrap gap-1.5">
               {byCategory.map((c) => (
@@ -134,7 +134,7 @@ export default function ExpensesPage() {
                       if (confirm('Delete this expense?')) del.mutate(e.id);
                     }}
                     aria-label="Delete expense"
-                    className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -143,7 +143,7 @@ export default function ExpensesPage() {
             ))}
             {rows.length === 0 && !q.isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
                   No expenses recorded yet — add your first one.
                 </td>
               </tr>

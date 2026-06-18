@@ -118,7 +118,7 @@ export default function TrainersPage() {
                 <span>
                   <span className="block font-semibold text-slate-800">
                     {t.fullName}
-                    {!t.isActive && <span className="ml-2 text-xs font-normal text-slate-400">(archived)</span>}
+                    {!t.isActive && <span className="ml-2 text-xs font-normal text-slate-500">(archived)</span>}
                   </span>
                   <span className="block text-sm text-slate-500">{t.specialization ?? t.email ?? '—'}</span>
                 </span>
@@ -136,14 +136,14 @@ export default function TrainersPage() {
                 <button
                   onClick={() => openEdit(t)}
                   aria-label="Edit trainer"
-                  className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-brand"
+                  className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-brand"
                 >
                   <Pencil size={16} />
                 </button>
                 <button
                   onClick={() => setOpen(open === t.id ? null : t.id)}
                   aria-label="Show members"
-                  className={`rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 ${open === t.id ? 'rotate-180' : ''}`}
+                  className={`rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 ${open === t.id ? 'rotate-180' : ''}`}
                 >
                   <ChevronDown size={16} />
                 </button>
@@ -152,17 +152,17 @@ export default function TrainersPage() {
             {open === t.id && (
               <div className="mt-4 border-t border-slate-100 pt-3">
                 {t.bio && <p className="mb-3 text-sm text-slate-500">{t.bio}</p>}
-                <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Assigned members</div>
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Assigned members</div>
                 <ul className="divide-y divide-slate-100 text-sm">
                   {(membersQ.data ?? []).map((m) => (
                     <li key={m.id} className="flex justify-between py-2">
                       <span>
-                        <span className="font-mono text-xs text-slate-400">{m.memberCode}</span> {m.fullName}
+                        <span className="font-mono text-xs text-slate-500">{m.memberCode}</span> {m.fullName}
                       </span>
                       <span className="text-slate-500">{m.status}</span>
                     </li>
                   ))}
-                  {membersQ.data?.length === 0 && <li className="py-2 text-slate-400">No members assigned yet.</li>}
+                  {membersQ.data?.length === 0 && <li className="py-2 text-slate-500">No members assigned yet.</li>}
                 </ul>
                 {t.isActive && (
                   <button
@@ -171,7 +171,7 @@ export default function TrainersPage() {
                         archive.mutate(t.id);
                       }
                     }}
-                    className="mt-3 text-xs font-semibold text-slate-400 transition hover:text-red-600"
+                    className="mt-3 text-xs font-semibold text-slate-500 transition hover:text-red-600"
                   >
                     Archive trainer
                   </button>
@@ -182,7 +182,7 @@ export default function TrainersPage() {
         ))}
         {trainers.length === 0 && !trainersQ.isLoading && (
           <Card>
-            <p className="py-6 text-center text-slate-400">No trainers yet — add your first coach.</p>
+            <p className="py-6 text-center text-slate-500">No trainers yet — add your first coach.</p>
           </Card>
         )}
       </div>

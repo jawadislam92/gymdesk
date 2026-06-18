@@ -160,7 +160,7 @@ export default function ShopPage() {
                 <tr key={p.id} className={`transition hover:bg-slate-50/60 ${p.isActive ? '' : 'opacity-50'}`}>
                   <td className="px-4 py-3 font-semibold text-slate-800">
                     {p.name}
-                    {!p.isActive && <span className="ml-2 text-xs font-normal text-slate-400">(archived)</span>}
+                    {!p.isActive && <span className="ml-2 text-xs font-normal text-slate-500">(archived)</span>}
                   </td>
                   <td className="px-4 py-3 text-right font-medium">{money(p.price, currency)}</td>
                   <td className="px-4 py-3 text-center">
@@ -174,7 +174,7 @@ export default function ShopPage() {
                       <button
                         onClick={() => openEdit(p)}
                         aria-label="Edit product"
-                        className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-brand"
+                        className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-brand"
                       >
                         <Pencil size={16} />
                       </button>
@@ -183,7 +183,7 @@ export default function ShopPage() {
                           onClick={() => {
                             if (confirm(`Archive “${p.name}”?`)) archive.mutate(p.id);
                           }}
-                          className="rounded-lg px-2 py-2 text-xs font-semibold text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                          className="rounded-lg px-2 py-2 text-xs font-semibold text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                         >
                           Archive
                         </button>
@@ -194,7 +194,7 @@ export default function ShopPage() {
               ))}
               {products.length === 0 && !productsQ.isLoading && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-10 text-center text-slate-400">
+                  <td colSpan={4} className="px-4 py-10 text-center text-slate-500">
                     No products yet — add your first item to start selling.
                   </td>
                 </tr>
@@ -204,16 +204,16 @@ export default function ShopPage() {
         </Card>
 
         <div>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Recent sales</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Recent sales</h2>
           <Card className="max-h-[28rem] overflow-y-auto">
             <ul className="divide-y divide-slate-100">
               {sales.map((s) => (
                 <li key={s.id} className="flex items-center justify-between gap-2 py-2.5">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium text-slate-700">
-                      {s.productName} <span className="text-slate-400">× {s.quantity}</span>
+                      {s.productName} <span className="text-slate-500">× {s.quantity}</span>
                     </div>
-                    <div className="text-xs text-slate-400">{new Date(s.createdAt).toLocaleString()}</div>
+                    <div className="text-xs text-slate-500">{new Date(s.createdAt).toLocaleString()}</div>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
                     <span className="text-sm font-semibold">{money(s.total, currency)}</span>
@@ -223,7 +223,7 @@ export default function ShopPage() {
                   </div>
                 </li>
               ))}
-              {sales.length === 0 && <li className="py-6 text-center text-sm text-slate-400">No sales yet.</li>}
+              {sales.length === 0 && <li className="py-6 text-center text-sm text-slate-500">No sales yet.</li>}
             </ul>
           </Card>
         </div>

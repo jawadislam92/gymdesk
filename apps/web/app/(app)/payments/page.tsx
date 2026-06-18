@@ -225,7 +225,7 @@ export default function PaymentsPage() {
           </div>
         </form>
         {billingQuery.data && !billingQuery.data.enabled && (
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-slate-500">
             💳 Online card payments are built in — add your Stripe keys to switch them on
             (see DEPLOYMENT.md §5).
           </p>
@@ -277,7 +277,7 @@ export default function PaymentsPage() {
             ))}
             {payments.length === 0 && !paymentsQuery.isLoading && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
                   No payments yet.
                 </td>
               </tr>

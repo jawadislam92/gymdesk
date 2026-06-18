@@ -25,10 +25,10 @@ function fmtLabel(l: string): string {
 
 const BRAND = '#f97316';
 const GRID = '#e2e8f0';
-const AXIS = '#94a3b8';
+const AXIS = '#64748b'; // slate-500 — 4.76:1 on white (AA); slate-400 failed at 2.56:1
 
 function Empty() {
-  return <div className="flex h-44 items-center justify-center text-sm text-slate-400">No data yet.</div>;
+  return <div className="flex h-44 items-center justify-center text-sm text-slate-500">No data yet.</div>;
 }
 
 export function LineChart({

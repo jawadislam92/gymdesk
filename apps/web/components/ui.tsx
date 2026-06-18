@@ -69,7 +69,7 @@ export function Input({ label, ...props }: InputHTMLAttributes<HTMLInputElement>
     <label className="block text-sm">
       {label && <span className="mb-1.5 block font-medium text-slate-600">{label}</span>}
       <input
-        className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-brand focus:ring-2 focus:ring-brand/25"
+        className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition placeholder:text-slate-500 focus:border-brand focus:ring-2 focus:ring-brand/25"
         {...props}
       />
     </label>
@@ -124,7 +124,7 @@ export function Textarea({
     <label className="block text-sm">
       {label && <span className="mb-1.5 block font-medium text-slate-600">{label}</span>}
       <textarea
-        className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-brand focus:ring-2 focus:ring-brand/25"
+        className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition placeholder:text-slate-500 focus:border-brand focus:ring-2 focus:ring-brand/25"
         {...props}
       />
     </label>
@@ -187,7 +187,7 @@ export function Modal({
           <button
             onClick={onClose}
             aria-label="Close"
-            className="-mr-1 shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            className="-mr-1 shrink-0 rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
           >
             <X size={18} />
           </button>

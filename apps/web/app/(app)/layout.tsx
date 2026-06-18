@@ -63,7 +63,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   }, [loading, user, isMemberOnly, isPlatformAdmin, router]);
 
   if (loading || !user || isMemberOnly || isPlatformAdmin) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-400">Loading…</div>;
+    return <div className="flex min-h-screen items-center justify-center text-slate-500">Loading…</div>;
   }
 
   const items = NAV.filter((n) => hasPermission(n.perm));

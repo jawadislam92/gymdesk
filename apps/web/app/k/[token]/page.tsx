@@ -52,7 +52,7 @@ export default function CheckinPage() {
               </p>
             )}
             {res.valid && res.membershipEndsAt && (
-              <p className="mt-4 text-xs text-slate-400">
+              <p className="mt-4 text-xs text-slate-500">
                 Membership valid until {new Date(res.membershipEndsAt).toLocaleDateString()}
               </p>
             )}
