@@ -16,6 +16,7 @@ import {
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { Card, PageHeader } from '@/components/ui';
+import { LineChart } from '@/components/charts';
 
 interface Dashboard {
   activeMembers: number;
@@ -54,6 +55,14 @@ export default function DashboardPage() {
     queryFn: () => apiFetch<Dashboard>('/dashboard'),
   });
   const firstName = user?.fullName?.split(' ')[0] ?? '';
+  const revenueQ = useQuery({
+    queryKey: ['report-revenue'],
+    queryFn: () => apiFetch<{ label: string; value: number }[]>('/reports/revenue'),
+  });
+  const gymQ = useQuery({ queryKey: ['gym'], queryFn: () => apiFetch<{ currency: string }>('/gym') });
+  const sym =
+    ({ USD: '$', EUR: '€', GBP: '£', PKR: '₨', INR: '₹' } as Record<string, string>)[gymQ.data?.currency ?? 'USD'] ??
+    '$';
 
   return (
     <div>
@@ -86,6 +95,14 @@ export default function DashboardPage() {
           );
         })}
       </div>
+
+      <Card className="mt-8">
+        <div className="mb-1 flex items-center justify-between">
+          <h2 className="font-bold text-slate-900">Revenue</h2>
+          <span className="text-xs text-slate-400">last 6 months</span>
+        </div>
+        <LineChart data={revenueQ.data ?? []} money symbol={sym} height={180} />
+      </Card>
 
       <div className="mt-8">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Quick actions</h2>

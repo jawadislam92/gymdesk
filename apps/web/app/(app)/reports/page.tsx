@@ -2,33 +2,15 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
-import { Button, Card } from '@/components/ui';
+import { Button, Card, PageHeader } from '@/components/ui';
+import { BarChart, LineChart } from '@/components/charts';
 
 interface Point {
   label: string;
   value: number;
 }
 
-function BarChart({ data, money = false }: { data: Point[]; money?: boolean }) {
-  const max = Math.max(1, ...data.map((d) => d.value));
-  if (data.length === 0) return <p className="text-sm text-slate-400">No data yet.</p>;
-  return (
-    <div className="flex h-48 items-end gap-2">
-      {data.map((d) => (
-        <div key={d.label} className="flex flex-1 flex-col items-center justify-end">
-          <div className="mb-1 text-xs font-medium text-slate-600">
-            {money ? `$${d.value}` : d.value}
-          </div>
-          <div
-            className="w-full rounded-t bg-brand"
-            style={{ height: `${(d.value / max) * 100}%`, minHeight: d.value > 0 ? 4 : 0 }}
-          />
-          <div className="mt-1 text-[10px] text-slate-400">{d.label}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
+const SYMBOL: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', PKR: '₨', INR: '₹', AED: 'AED ' };
 
 function downloadCsv(filename: string, rows: Point[], valueHeader: string) {
   const csv = [`label,${valueHeader}`, ...rows.map((r) => `${r.label},${r.value}`)].join('\n');
@@ -45,14 +27,43 @@ export default function ReportsPage() {
   const growth = useQuery({ queryKey: ['report-growth'], queryFn: () => apiFetch<Point[]>('/reports/membership-growth') });
   const attendance = useQuery({ queryKey: ['report-attendance'], queryFn: () => apiFetch<Point[]>('/reports/attendance') });
   const expenses = useQuery({ queryKey: ['report-expenses'], queryFn: () => apiFetch<Point[]>('/reports/expenses') });
+  const gymQ = useQuery({ queryKey: ['gym'], queryFn: () => apiFetch<{ currency: string }>('/gym') });
+  const currency = gymQ.data?.currency ?? 'USD';
+  const sym = SYMBOL[currency] ?? `${currency} `;
+
+  const sum = (d?: Point[]) => (d ?? []).reduce((s, p) => s + p.value, 0);
+  const rev = sum(revenue.data);
+  const exp = sum(expenses.data);
+  const profit = rev - exp;
+  const money = (n: number) => `${sym}${n.toLocaleString()}`;
+
+  const KPIS = [
+    { label: 'Revenue (6 mo)', value: money(rev), tone: 'text-slate-900' },
+    { label: 'Expenses (6 mo)', value: money(exp), tone: 'text-slate-900' },
+    { label: 'Net profit (6 mo)', value: money(profit), tone: profit >= 0 ? 'text-green-600' : 'text-red-600' },
+    { label: 'New members (6 mo)', value: sum(growth.data).toLocaleString(), tone: 'text-slate-900' },
+    { label: 'Check-ins (14 days)', value: sum(attendance.data).toLocaleString(), tone: 'text-slate-900' },
+  ];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Reports</h1>
+    <div>
+      <PageHeader
+        title="Reports"
+        description="The numbers behind the business — revenue, profit, membership growth, and attendance trends at a glance."
+      />
 
-      <Card>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-semibold">Revenue (last 6 months)</h2>
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        {KPIS.map((k) => (
+          <Card key={k.label}>
+            <div className="text-sm font-medium text-slate-500">{k.label}</div>
+            <div className={`mt-1 text-2xl font-bold tracking-tight ${k.tone}`}>{k.value}</div>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="mb-6">
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="font-bold text-slate-900">Revenue</h2>
           <Button
             variant="ghost"
             disabled={!revenue.data?.length}
@@ -61,44 +72,37 @@ export default function ReportsPage() {
             Download CSV
           </Button>
         </div>
-        <BarChart data={revenue.data ?? []} money />
+        <p className="mb-3 text-xs text-slate-400">Collected payments per month · last 6 months</p>
+        <LineChart data={revenue.data ?? []} money symbol={sym} />
       </Card>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
-          <h2 className="mb-4 font-semibold">Expenses (last 6 months)</h2>
-          <BarChart data={expenses.data ?? []} money />
-        </Card>
-        <Card>
-          <h2 className="mb-4 font-semibold">Net profit (6 months)</h2>
-          {(() => {
-            const rev = (revenue.data ?? []).reduce((s, p) => s + p.value, 0);
-            const exp = (expenses.data ?? []).reduce((s, p) => s + p.value, 0);
-            const profit = rev - exp;
-            return (
-              <div>
-                <div className={`text-4xl font-bold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  ${profit.toLocaleString()}
-                </div>
-                <div className="mt-2 text-sm text-slate-500">
-                  Revenue ${rev.toLocaleString()} − Expenses ${exp.toLocaleString()}
-                </div>
-              </div>
-            );
-          })()}
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <h2 className="mb-4 font-semibold">New members (last 6 months)</h2>
+          <h2 className="mb-1 font-bold text-slate-900">New members</h2>
+          <p className="mb-3 text-xs text-slate-400">Joined per month · last 6 months</p>
           <BarChart data={growth.data ?? []} />
         </Card>
         <Card>
-          <h2 className="mb-4 font-semibold">Check-ins (last 14 days)</h2>
-          <BarChart data={attendance.data ?? []} />
+          <h2 className="mb-1 font-bold text-slate-900">Check-ins</h2>
+          <p className="mb-3 text-xs text-slate-400">Daily attendance · last 14 days</p>
+          <LineChart data={attendance.data ?? []} />
         </Card>
       </div>
+
+      <Card>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="font-bold text-slate-900">Expenses</h2>
+          <Button
+            variant="ghost"
+            disabled={!expenses.data?.length}
+            onClick={() => downloadCsv('expenses.csv', expenses.data ?? [], 'expenses')}
+          >
+            Download CSV
+          </Button>
+        </div>
+        <p className="mb-3 text-xs text-slate-400">Recorded costs per month · last 6 months</p>
+        <BarChart data={expenses.data ?? []} money symbol={sym} />
+      </Card>
     </div>
   );
 }
