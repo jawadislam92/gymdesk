@@ -5,6 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { ASSIGNABLE_ROLES } from '@gymflow/shared';
 import { apiFetch } from '@/lib/api';
 import { Badge, Button, Card, Input, Select } from '@/components/ui';
+import { SupportAccessCard } from '@/components/support-access-card';
 
 interface Gym {
   id: string;
@@ -274,6 +275,8 @@ export default function SettingsPage() {
           </Button>
         </form>
       </Card>
+
+      <SupportAccessCard />
     </div>
   );
 }

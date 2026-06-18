@@ -32,6 +32,7 @@ import { BillingModule } from './billing/billing.module';
 import { AutomationsModule } from './automations/automations.module';
 import { LoyaltyModule } from './loyalty/loyalty.module';
 import { AiModule } from './ai/ai.module';
+import { SupportAccessModule } from './support-access/support-access.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { AiModule } from './ai/ai.module';
     AutomationsModule,
     LoyaltyModule,
     AiModule,
+    SupportAccessModule,
   ],
 })
 export class AppModule {}

@@ -105,6 +105,7 @@ Navigation is the dark sidebar on the left.
 - **Where:** sidebar → Settings.
 - **What:** your gym profile (name, address, city, currency, timezone, logo) and staff/role management.
 - **How:** edit gym details; invite staff and assign roles/permissions.
+- **🛟 Support access:** at the bottom of Settings. Stuck on something? Generate a secure code that lets GymFlow support open your account and fix it. **You** choose how much access (**Full** = can make changes, or **Limited** = view & diagnose, no billing/staff/settings/deletions) and how long (**1 hour – 7 days**). The code is shown **once** — share it with support. Access **auto-expires** when the timer runs out, you can **revoke** it anytime, and every grant is **audit-logged**.
 
 ---
 
@@ -136,6 +137,7 @@ Navigation is the dark sidebar on the left.
 
 - **Login:** `admin@gymflow.app` → the platform console.
 - **What:** the SaaS operator view — see and manage all gyms (tenants) on the platform, their subscriptions and status.
+- **🛟 Support access:** when a gym shares a support code, paste it under **Support access → Open session** to drop into a **scoped, auto-expiring** session inside that gym (an amber banner shows the gym, access level, and a live countdown the whole time; **Exit support** returns you here). Live support windows from every gym are listed below the box. Only the platform admin can redeem, redemptions are **audit-logged**, and a single session token lasts at most 2 hours (re-open to extend within the gym's window).
 
 ---
 

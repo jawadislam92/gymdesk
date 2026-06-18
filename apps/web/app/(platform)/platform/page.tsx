@@ -5,6 +5,7 @@ import { useState, type FormEvent } from 'react';
 import { apiFetch } from '@/lib/api';
 import { Activity, Building2, DollarSign, Users } from 'lucide-react';
 import { Badge, Button, Card, Input, Select } from '@/components/ui';
+import { SupportAccessPanel } from '@/components/support-access-panel';
 
 interface Overview {
   totalGyms: number;
@@ -118,6 +119,8 @@ export default function PlatformPage() {
           );
         })}
       </div>
+
+      <SupportAccessPanel />
 
       {showAdd && (
         <Card className="mb-6">

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { PERMISSIONS } from '@gymflow/shared';
 import { useAuth } from '@/lib/auth';
+import { SupportBanner } from '@/components/support-banner';
 
 const NAV: { href: string; label: string; perm: string; icon: LucideIcon }[] = [
   { href: '/dashboard', label: 'Dashboard', perm: PERMISSIONS.DASHBOARD_VIEW, icon: LayoutDashboard },
@@ -122,8 +123,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto p-6 sm:p-8">
-        <div className="mx-auto max-w-6xl">{children}</div>
+      <main className="flex-1 overflow-y-auto">
+        <SupportBanner />
+        <div className="mx-auto max-w-6xl p-6 sm:p-8">{children}</div>
       </main>
     </div>
   );

@@ -38,6 +38,18 @@ export class TokenService {
     return { accessToken, refreshToken };
   }
 
+  /**
+   * Mint a short-lived access token only (no refresh) for a support session.
+   * The session auto-expires when this token does; there is nothing to revoke
+   * in Redis, and the operator's own refresh token is never touched.
+   */
+  async issueSupportToken(payload: AccessTokenPayload, ttlSeconds: number): Promise<string> {
+    return this.jwt.signAsync(payload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: ttlSeconds,
+    } as JwtSignOptions);
+  }
+
   async verifyRefresh(token: string): Promise<RefreshTokenPayload> {
     let payload: RefreshTokenPayload;
     try {

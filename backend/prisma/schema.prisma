@@ -168,6 +168,7 @@ model Gym {
   products          Product[]
   sales             Sale[]
   automations       Automation[]
+  supportGrants     SupportGrant[]
 
   @@map("gyms")
 }
@@ -192,6 +193,30 @@ model Automation {
 
   @@index([gymId, enabled])
   @@map("automations")
+}
+
+/// Consented support access: a gym owner mints a time-limited, scoped, revocable
+/// code that the platform operator redeems to open an auto-expiring session into
+/// that gym to fix a reported issue. The row doubles as the audit trail (who
+/// minted, who redeemed, when, expiry, revocation). See AuditLog for events.
+model SupportGrant {
+  id           String    @id @default(uuid())
+  gymId        String    @map("gym_id")
+  code         String    @unique
+  scope        String    @default("full") // read_only | full
+  reason       String?
+  createdById  String    @map("created_by_id") // gym user who granted access
+  expiresAt    DateTime  @map("expires_at")
+  revokedAt    DateTime? @map("revoked_at")
+  redeemedAt   DateTime? @map("redeemed_at") // first redemption
+  redeemedById String?   @map("redeemed_by_id") // platform operator
+  lastUsedAt   DateTime? @map("last_used_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  gym Gym @relation(fields: [gymId], references: [id], onDelete: Cascade)
+
+  @@index([gymId])
+  @@map("support_grants")
 }
 
 model User {
