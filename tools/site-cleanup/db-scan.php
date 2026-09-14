@@ -34,9 +34,14 @@ $BROWSER_TOKEN = 'CHANGE_ME_TO_A_LONG_RANDOM_STRING';
 if (!$IS_CLI) {
     header('Content-Type: text/plain; charset=utf-8');
     header('X-Robots-Tag: noindex, nofollow');
-    if ($BROWSER_TOKEN === 'CHANGE_ME_TO_A_LONG_RANDOM_STRING'
-        || !hash_equals($BROWSER_TOKEN, isset($_GET['token']) ? $_GET['token'] : '')) {
-        header('HTTP/1.1 404 Not Found');
+    // See the note in scan.php: the placeholder is never repeated in full here,
+    // so a find-and-replace on it cannot break this check.
+    if (strlen($BROWSER_TOKEN) < 16 || strncmp($BROWSER_TOKEN, 'CHANGE', 6) === 0) {
+        http_response_code(500);
+        exit('Open db-scan.php and put a random string of at least 16 characters in $BROWSER_TOKEN first.');
+    }
+    if (!hash_equals($BROWSER_TOKEN, isset($_GET['token']) ? $_GET['token'] : '')) {
+        http_response_code(404);
         exit('Not Found');
     }
 }

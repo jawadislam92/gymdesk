@@ -41,11 +41,15 @@ if (!$IS_CLI) {
     header('Content-Type: text/html; charset=utf-8');
     header('X-Robots-Tag: noindex, nofollow');
     $given = isset($_GET['token']) ? $_GET['token'] : '';
-    if ($BROWSER_TOKEN === 'CHANGE_ME_TO_A_LONG_RANDOM_STRING') {
-        exit('Set $BROWSER_TOKEN inside scan.php before running it from a browser.');
+    // The guard deliberately avoids repeating the placeholder in full: replacing
+    // it with find-and-replace would otherwise rewrite this line too and the
+    // check would reject every token, including the right one.
+    if (strlen($BROWSER_TOKEN) < 16 || strncmp($BROWSER_TOKEN, 'CHANGE', 6) === 0) {
+        http_response_code(500);
+        exit('Open scan.php and put a random string of at least 16 characters in $BROWSER_TOKEN first.');
     }
     if (!hash_equals($BROWSER_TOKEN, $given)) {
-        header('HTTP/1.1 404 Not Found');
+        http_response_code(404);
         exit('Not Found');
     }
 }
@@ -272,12 +276,26 @@ $filter = new RecursiveCallbackFilterIterator($dirIter, function ($current) use 
 });
 $walker = new RecursiveIteratorIterator($filter, RecursiveIteratorIterator::LEAVES_ONLY);
 
+// The scanner and its companions carry malware signatures as literal strings,
+// so they match their own rules. Leave them out of the report.
+$SELF = array();
+foreach (array(__FILE__, dirname(__FILE__) . '/db-scan.php', dirname(__FILE__) . '/clean.php') as $own) {
+    $r = realpath($own);
+    if ($r !== false) {
+        $SELF[$r] = true;
+    }
+}
+
 foreach ($walker as $file) {
     if (!$file->isFile()) {
         continue;
     }
 
     $path = $file->getPathname();
+    $realPath = realpath($path);
+    if ($realPath !== false && isset($SELF[$realPath])) {
+        continue;
+    }
     $rel  = ltrim(substr($path, strlen($ROOT)), '/');
     $name = $file->getFilename();
     $ext  = strtolower(pathinfo($name, PATHINFO_EXTENSION));

@@ -133,8 +133,10 @@ sh ~/.quarantine-YYYYMMDD-HHMMSS/restore.sh
 
 ## Chalane ka tareeqa B: SSH nahi hai
 
-1. Har script kholein aur `$BROWSER_TOKEN` mein ek lamba random string daal dein
-   (misal `k9Xm2Qp7Lw4Rt8Yv3Nb6Hc1Zs5Fd`).
+1. Har script kholein aur `$BROWSER_TOKEN` waali line mein ek lamba random string
+   daal dein (kam az kam 16 characters, misal `k9Xm2Qp7Lw4Rt8Yv3Nb6Hc1Zs5Fd`).
+   Sirf line 28 waali assignment badalni hai. Baqi script mein wo placeholder
+   dobara nahi likha, is liye find-and-replace se bhi kuch nahi tootega.
 2. hPanel > Files > File Manager se `scan.php` aur `db-scan.php` ko `public_html`
    mein upload karein.
 3. Browser mein kholein:
