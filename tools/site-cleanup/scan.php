@@ -73,7 +73,12 @@ function opt($name, $default = null)
 }
 
 $ROOT = rtrim((string) opt('root', $IS_CLI ? getcwd() : dirname(__FILE__)), '/');
-$OUT  = (string) opt('out', ($IS_CLI ? getcwd() : dirname(__FILE__)) . '/scan-report');
+// In browser mode the report lands inside the web root, where anyone could
+// fetch it - and it lists exactly where the backdoors are. Tie the filename to
+// the token so it cannot be guessed.
+$OUT  = (string) opt('out', $IS_CLI
+    ? getcwd() . '/scan-report'
+    : dirname(__FILE__) . '/scan-report-' . substr(hash('sha256', $BROWSER_TOKEN), 0, 16));
 $SINCE = opt('since', null);
 $SINCE_TS = $SINCE ? strtotime($SINCE) : null;
 $MAX_READ = 3 * 1024 * 1024;   // fully read files up to 3 MB

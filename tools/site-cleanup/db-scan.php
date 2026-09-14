@@ -101,7 +101,9 @@ if (!isset($conf['DB_NAME'], $conf['DB_USER'], $conf['DB_HOST'])) {
     exit("Could not read DB credentials from $cfgPath\n");
 }
 
-$OUT   = (string) opt('out', dirname($cfgPath) . '/db-report');
+// Same reasoning as scan.php: an unguessable name when served over the web.
+$OUT   = (string) opt('out', dirname($cfgPath) . '/db-report'
+    . ($IS_CLI ? '' : '-' . substr(hash('sha256', $BROWSER_TOKEN), 0, 16)));
 $SINCE = opt('since', null);
 $SINCE_DATE = $SINCE ? date('Y-m-d H:i:s', strtotime($SINCE)) : null;
 $ROOT  = rtrim((string) opt('root', dirname($cfgPath)), '/');
