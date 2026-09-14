@@ -61,11 +61,30 @@ HTML file ko download kar ke browser mein kholein, padhne mein asaan hai.
 ```sh
 php db-scan.php \
   --config=$HOME/domains/blazerealty.ae/public_html/wp-config.php \
+  --domain=blazerealty.ae \
   --out=$HOME/db-report \
   --since=2026-06-01
 ```
 
 Password kahin type nahi karna, script `wp-config.php` se khud utha leti hai.
+
+`--domain` zaroori hai. Isi se script pehchanti hai ke konsa URL aapka hai aur
+konsa hacker ka. Ye na dein to site URL sirf dikhaya jayega, judge nahi hoga.
+
+Ye check hote hain:
+
+- Har administrator account, aur kaun sa naya ya mashkook hai
+- Admin capability jo kisi anjaan meta key mein chhupayi gayi ho
+- `siteurl` aur `home` hijack hue ya nahi
+- Public registration khuli hai, aur naye user ko konsa role milta hai
+- `wp_options` mein `eval`, `base64_decode`, `<script` waghera
+- Posts aur pages mein injected script ya spam
+- Cron jobs jo WordPress ke apne nahi (malware yahin se dobara install hota hai)
+- Anjaan ya random naam waale database tables
+- `wp-content/plugins/` mein folder jis mein `Plugin Name:` header hi nahi
+- Active theme jo disk par maujood hi nahi
+- `wp-config.php` ke security keys purane ya default to nahi
+- Jin accounts par password reset pending hai
 
 Ye `db-report.txt`, `db-report.json` aur agar kuch mila to `db-report.sql` banati hai.
 Woh `.sql` file **chalti nahi**, sirf likhi jati hai. Aap khud padh kar chalayein:

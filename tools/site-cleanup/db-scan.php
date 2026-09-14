@@ -13,9 +13,14 @@
  *  Database credentials are read straight out of wp-config.php, so you never
  *  type a password anywhere.
  *
- *      php db-scan.php --config=/home/uXXXXXX/domains/blazerealty.ae/public_html/wp-config.php \
+ *      php db-scan.php --config=/home/uXXXXXX/domains/example.com/public_html/wp-config.php \
+ *                      --domain=example.com \
  *                      --out=/home/uXXXXXX/db-report \
  *                      --since=2026-06-01
+ *
+ *  --domain lets it tell your own URLs from an attacker's.
+ *  --root   defaults to the folder holding wp-config.php; pass it only when
+ *           wp-config.php sits one level above the WordPress install.
  * =============================================================================
  */
 
@@ -73,8 +78,14 @@ if (!$cfgPath || !is_file($cfgPath)) {
 $cfgSrc = (string) file_get_contents($cfgPath);
 $conf = array();
 foreach (array('DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST', 'DB_CHARSET') as $k) {
-    if (preg_match('~define\s*\(\s*[\'"]' . $k . '[\'"]\s*,\s*[\'"]((?:[^\'"\\\\]|\\\\.)*)[\'"]~', $cfgSrc, $m)) {
-        $conf[$k] = stripcslashes($m[1]);
+    // Tie the closing quote to the opening one, then unescape the way PHP does
+    // for that quote style: single quotes only honour \' and \\, double quotes
+    // honour the full set. Getting this wrong breaks the connection on any
+    // password holding a backslash.
+    if (preg_match('~define\s*\(\s*[\'"]' . $k . '[\'"]\s*,\s*([\'"])((?:(?!\1)[^\\\\]|\\\\.)*)\1~', $cfgSrc, $m)) {
+        $conf[$k] = ($m[1] === "'")
+            ? str_replace(array("\\'", '\\\\'), array("'", '\\'), $m[2])
+            : stripcslashes($m[2]);
     }
 }
 $prefix = 'wp_';
@@ -88,6 +99,15 @@ if (!isset($conf['DB_NAME'], $conf['DB_USER'], $conf['DB_HOST'])) {
 $OUT   = (string) opt('out', dirname($cfgPath) . '/db-report');
 $SINCE = opt('since', null);
 $SINCE_DATE = $SINCE ? date('Y-m-d H:i:s', strtotime($SINCE)) : null;
+$ROOT  = rtrim((string) opt('root', dirname($cfgPath)), '/');
+
+// Your own domain, used to tell your URLs apart from an attacker's. Without it
+// the site URL is only reported, not judged, because the stored value is
+// exactly what an attacker would have changed.
+$DOMAIN = (string) opt('domain', '');
+if ($DOMAIN !== '') {
+    $DOMAIN = preg_replace('~^https?://|^www\.|/.*$~i', '', $DOMAIN);
+}
 
 // -----------------------------------------------------------------------------
 // Connect
@@ -199,8 +219,9 @@ foreach ($admins as $a) {
     if (preg_match('~@(?:mail\.ru|yandex|bk\.ru|list\.ru|inbox\.ru|rambler|protonmail|tempmail|guerrillamail|10minutemail)~i', $a['user_email'])) {
         $flags[] = 'throwaway or foreign mail provider';
     }
-    if ($a['user_url'] && !preg_match('~blazerealty~i', $a['user_url'])) {
-        $flags[] = 'external website URL set';
+    if ($a['user_url'] !== '' && $DOMAIN !== ''
+        && stripos($a['user_url'], $DOMAIN) === false) {
+        $flags[] = 'website URL points somewhere else: ' . $a['user_url'];
     }
     $sev = $flags ? 'critical' : 'low';
     note($sev, 'admin_user', $a['user_login'],
@@ -229,9 +250,19 @@ foreach ($oddCaps as $o) {
 
 $urls = q("SELECT option_name, option_value FROM " . $T('options') . " WHERE option_name IN ('siteurl','home')");
 foreach ($urls as $u) {
-    note(preg_match('~blazerealty~i', $u['option_value']) ? 'low' : 'critical', 'site_url', $u['option_name'],
-        'Value is ' . $u['option_value'] . ' -- if this is not your own domain the site has been hijacked.',
-        $u['option_value']);
+    if ($DOMAIN === '') {
+        note('low', 'site_url', $u['option_name'],
+            'Value is ' . $u['option_value'] . ' -- confirm this is your own domain. '
+            . 'Pass --domain=yoursite.com and this gets checked for you.', $u['option_value']);
+    } elseif (stripos($u['option_value'], $DOMAIN) === false) {
+        note('critical', 'site_url', $u['option_name'],
+            'Value is ' . $u['option_value'] . ' but your domain is ' . $DOMAIN . '. The site URL has been hijacked.',
+            $u['option_value']);
+        fix('Restore ' . $u['option_name'] . ' to your own domain (edit the URL if https or a subfolder differs)',
+            "UPDATE " . $T('options') . " SET option_value = 'https://" . $DOMAIN . "' WHERE option_name = '" . $u['option_name'] . "';");
+    } else {
+        note('low', 'site_url', $u['option_name'], 'Value is ' . $u['option_value'] . ' -- matches your domain.', $u['option_value']);
+    }
 }
 
 // Open registration + default role
@@ -376,6 +407,117 @@ foreach (array('postmeta' => 'meta_id', 'usermeta' => 'umeta_id', 'commentmeta' 
                 'Row ' . $r[$pk] . ' in ' . $prefix . $tbl . ' contains "' . $needle . '"', $needle);
         }
     }
+}
+
+// -----------------------------------------------------------------------------
+// 8. Plugins on disk that WordPress does not know about
+// -----------------------------------------------------------------------------
+
+$pluginDir = $ROOT . '/wp-content/plugins';
+if (is_dir($pluginDir)) {
+    $activeRow = q("SELECT option_value FROM " . $T('options') . " WHERE option_name = 'active_plugins' LIMIT 1");
+    $active = $activeRow ? @unserialize($activeRow[0]['option_value']) : array();
+    if (!is_array($active)) {
+        $active = array();
+    }
+    $activeSlugs = array();
+    foreach ($active as $entry) {
+        $activeSlugs[strtok($entry, '/')] = true;
+    }
+
+    foreach (@scandir($pluginDir) as $entry) {
+        if ($entry === '.' || $entry === '..') {
+            continue;
+        }
+        $full = $pluginDir . '/' . $entry;
+
+        // A loose .php file straight inside plugins/ is either a single-file
+        // plugin or a dropper. index.php is WordPress's own placeholder.
+        if (is_file($full) && preg_match('~\.php$~i', $entry) && $entry !== 'index.php') {
+            if (!isset($active[$entry]) && !in_array($entry, $active, true)) {
+                note('high', 'orphan_plugin_file', 'wp-content/plugins/' . $entry,
+                    'Single PHP file in the plugins folder that is not in active_plugins.');
+            }
+            continue;
+        }
+        if (!is_dir($full) || $entry === 'index.php') {
+            continue;
+        }
+        // A plugin folder can legitimately be installed but deactivated, so this
+        // is a prompt to look, not a verdict. A folder with no plugin header is
+        // the one that matters.
+        $hasHeader = false;
+        foreach ((array) @glob($full . '/*.php') as $php) {
+            $head = (string) @file_get_contents($php, false, null, 0, 8192);
+            if (stripos($head, 'Plugin Name:') !== false) {
+                $hasHeader = true;
+                break;
+            }
+        }
+        if (!$hasHeader) {
+            note('high', 'plugin_no_header', 'wp-content/plugins/' . $entry,
+                'Folder in wp-content/plugins/ with no Plugin Name header in any file. '
+                . 'Real plugins always carry one, so this is most likely a hiding place.');
+        } elseif (!isset($activeSlugs[$entry])) {
+            note('low', 'plugin_inactive', 'wp-content/plugins/' . $entry,
+                'Installed but not active. Delete it if you do not use it - inactive plugin code still sits on disk and can still be reached.');
+        }
+    }
+}
+
+// Themes that are installed but not the active one
+$themeRow = q("SELECT option_name, option_value FROM " . $T('options') . " WHERE option_name IN ('template','stylesheet')");
+foreach ($themeRow as $t) {
+    $dir = $ROOT . '/wp-content/themes/' . $t['option_value'];
+    if (!is_dir($dir)) {
+        note('critical', 'missing_theme', $t['option_value'],
+            'The active theme (' . $t['option_name'] . ') is not on disk. The site is either broken or pointed at something that was removed.',
+            $t['option_value']);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 9. wp-config.php hygiene
+// -----------------------------------------------------------------------------
+
+$saltKeys = array('AUTH_KEY', 'SECURE_AUTH_KEY', 'LOGGED_IN_KEY', 'NONCE_KEY',
+    'AUTH_SALT', 'SECURE_AUTH_SALT', 'LOGGED_IN_SALT', 'NONCE_SALT');
+$weakSalts = array();
+foreach ($saltKeys as $k) {
+    if (preg_match('~define\s*\(\s*[\'"]' . $k . '[\'"]\s*,\s*[\'"]([^\'"]*)[\'"]~', $cfgSrc, $m)) {
+        $v = $m[1];
+        if ($v === '' || stripos($v, 'put your unique phrase here') !== false || strlen($v) < 32) {
+            $weakSalts[] = $k;
+        }
+    } else {
+        $weakSalts[] = $k . ' (missing)';
+    }
+}
+if ($weakSalts) {
+    note('critical', 'weak_salts', 'wp-config.php',
+        'These security keys are missing or still on the default value: ' . implode(', ', $weakSalts)
+        . '. Anyone holding an old session cookie stays logged in. Get fresh values from '
+        . 'https://api.wordpress.org/secret-key/1.1/salt/ and paste them over the old lines.');
+} else {
+    note('low', 'salts_ok', 'wp-config.php',
+        'Security keys are set. Replace them anyway as part of this clean-up - it logs out every session, the attacker included.');
+}
+
+if (!preg_match('~define\s*\(\s*[\'"]DISALLOW_FILE_EDIT[\'"]\s*,\s*true~i', $cfgSrc)) {
+    note('medium', 'file_edit_allowed', 'wp-config.php',
+        'The theme and plugin editor inside wp-admin is enabled, so one stolen admin login is enough to write PHP. '
+        . "Add  define('DISALLOW_FILE_EDIT', true);  above the \"stop editing\" line.");
+}
+
+// -----------------------------------------------------------------------------
+// 10. Accounts with a password reset pending
+// -----------------------------------------------------------------------------
+
+foreach (q("SELECT ID, user_login, user_email FROM " . $T('users') . "
+            WHERE user_activation_key <> '' LIMIT 25") as $u) {
+    note('medium', 'pending_reset', $u['user_login'],
+        'A password reset is outstanding on this account. If you did not request it, someone tried to take the account over.',
+        $u['user_email']);
 }
 
 // -----------------------------------------------------------------------------
